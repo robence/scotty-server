@@ -9,3 +9,6 @@ app.get('/', (req,res) => res.send('Hello World with Express'));
 app.listen(port, function () {
   console.log('Running scotty of port ' + port);
 });
+
+let apiRoutes = require('./api-routes')
+app.use('/api', apiRoutes)
