@@ -2,18 +2,17 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as mongoose from "mongoose";
 
-import { Routes } from "./my-routes";
-// import { ApiRoutes } from './api-routes'
+import { Routes } from "./routes/api-routes";
 
 class App {
   public app: express.Application;
-  public routePrv: Routes = new Routes();
-
-  public mongoUrl: string = process.env.MONGO_URL || 'mongodb://localhost/scotty';
+  public routePrv: Routes;
+  public mongoUrl: string = process.env.MONGO_URL
+    || 'mongodb://localhost/scotty';
 
   constructor() {
     this.app = express();
-    this.routePrv.routes(this.app);
+    this.routePrv = new Routes(this.app)
     this.config();
     this.mongoSetup();
   }
@@ -31,7 +30,6 @@ class App {
       err => console.log('[ERROR] - Cannot connect to MongoDB!')
     )
   }
-
 }
 
 export default new App().app;

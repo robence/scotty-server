@@ -20,10 +20,14 @@ class ContactController {
 
   create(req, res) {
     let contact = new Contact();
-    contact.name = req.body.name ? req.body.name : contact.name;
-    contact.gender = req.body.gender;
-    contact.email = req.body.email;
-    contact.phone = req.body.phone;
+    // console.log(req);
+    // contact.name = req.body.name ? req.body.name : contact.name;
+    // contact.gender = req.body.gender;
+    // contact.email = req.body.email;
+    // contact.phone = req.body.phone;
+
+    contact.name = 'Ben';
+    contact.email = 'email';
 
     contact.save(function (err) {
       if (err) {
