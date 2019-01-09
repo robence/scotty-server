@@ -1,4 +1,4 @@
-import * as mongoose from 'mongoose';
+import * as mongoose from "mongoose";
 
 const contactSchema = mongoose.Schema({
   name: {
@@ -17,11 +17,10 @@ const contactSchema = mongoose.Schema({
   }
 });
 
-
-contactSchema.statics.get = function (callback, limit) {
+contactSchema.statics.get = function(callback, limit) {
   Contact.find(callback).limit(limit);
 };
 
-const Contact = mongoose.model('contact', contactSchema);
+const Contact = mongoose.model("contact", contactSchema);
 
-export default Contact
+export default Contact;
