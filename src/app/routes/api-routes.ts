@@ -1,26 +1,28 @@
 // /lib/routes/crmRoutes.ts
 import { Application } from "express";
-import ContactController from "../contact/ContactController";
+import ContactController from "../modules/contact/contact-controller";
+import ContactsController from "../modules/contact/contacts-controller";
 
 export class Routes {
+
   constructor(public router: Application) {
     this.config();
   }
 
   config(): void {
-    this.setupContactsRoute();
+    this.setupContacts();
+    this.setupContactDetails();
   }
 
-  setupContactsRoute() {
-    this.router
-      .route("/contacts")
-      .get(ContactController.get)
-      .post(ContactController.create);
+  setupContacts() {
+    this.router.route("/contacts")
+      .get(ContactsController.get)
+      .post(ContactsController.create);
+    }
 
-    this.router
-      .route("/contacts/:contacts_id")
-      .get(ContactController.view)
-      .patch(ContactController.update)
+  setupContactDetails() {
+    this.router.route("/contacts/:id")
+      .get(ContactController.get)
       .put(ContactController.update)
       .delete(ContactController.delete);
   }
