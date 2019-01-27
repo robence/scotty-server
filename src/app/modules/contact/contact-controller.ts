@@ -1,8 +1,9 @@
 import Contact from "./contact-model";
+
 import { Request, Response } from "express";
 
 class ContactController {
-  
+
   get(req: Request, res: Response) {
     Contact.findById(req.params.id, (err, contact) => {
       if (err) {
@@ -32,7 +33,7 @@ class ContactController {
   }
 
   delete(req: Request, res: Response) {
-    Contact.remove({ _id: req.params.id }, (err, contact) => {
+    Contact.deleteOne({ _id: req.params.id }, (err) => {
       if (err) {
         res.send(err);
       }
@@ -43,6 +44,3 @@ class ContactController {
 
 const instance = new ContactController();
 export default instance;
-
-// is same as: (?)
-// export default new ContactController();

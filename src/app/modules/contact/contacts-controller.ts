@@ -1,4 +1,5 @@
 import Contact from "./contact-model";
+
 import { Request, Response } from "express";
 
 class ContactsController {
@@ -26,6 +27,3 @@ class ContactsController {
 
 const instance = new ContactsController();
 export default instance;
-
-// is same as: (?)
-// export default new ContactsController();
