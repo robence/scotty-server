@@ -1,6 +1,6 @@
-import Contact from '../models/contact-model';
-
 import { Request, Response } from 'express';
+
+import Contact from '../models/Contact';
 
 class ContactController {
   get(req: Request, res: Response) {
@@ -22,7 +22,7 @@ class ContactController {
   }
 
   create(req: Request, res: Response) {
-    let contact = new Contact(req.body);
+    const contact = new Contact(req.body);
 
     //
     // contact.validate((err) => {
@@ -46,7 +46,7 @@ class ContactController {
         if (err) {
           res.send(err);
         }
-        contact.save(function(err) {
+        contact.save((err) => {
           if (err) {
             res.json(err);
           }

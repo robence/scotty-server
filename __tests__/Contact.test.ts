@@ -1,7 +1,7 @@
 import * as request from 'supertest';
 import { expect } from 'chai';
 import * as mocha from 'mocha';
-import Contact from '../src/models/contact-model';
+import Contact from '../src/models/Contact';
 import app from '../src/app';
 
 describe('Contact', () => {
