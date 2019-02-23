@@ -31,12 +31,18 @@
     "ajv": "^6.9.1",
     "ajv-keywords": "^3.4.0",
     "babel-eslint": "^10.0.1",
+    "chai": "^4.2.0",
     "eslint": "^5.14.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^4.0.0",
+    "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-prettier": "^3.0.1",
     "jest": "^24.1.0",
+    "mocha": "^6.0.1",
     "nodemon": "^1.18.10",
     "prettier-eslint": "^8.8.2",
     "prettier-eslint-cli": "^4.7.1",
+    "supertest": "^3.4.2",
     "ts-jest": "^24.0.0",
     "ts-node": "^7.0.1"
   }
