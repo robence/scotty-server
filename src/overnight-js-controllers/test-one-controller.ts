@@ -9,7 +9,7 @@ import {
 } from '@overnightjs/core';
 
 @Controller('api/test-one')
-export class TestOneController {
+class TestOneController {
   @Get(':id')
   get(req: Request, res: Response): any {
     console.log(req.params.id);
@@ -49,7 +49,7 @@ export class TestOneController {
     } catch (err) {
       msg = err;
     } finally {
-      res.status(200).json({ msg: msg });
+      res.status(200).json({ msg: 'async' });
     }
   }
 
@@ -63,5 +63,5 @@ export class TestOneController {
   }
 }
 
-// let instance = new TestOneController();
-// export default instance;
+let instance = new TestOneController();
+export default instance;
