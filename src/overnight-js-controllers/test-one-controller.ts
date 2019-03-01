@@ -9,7 +9,7 @@ import {
 } from '@overnightjs/core';
 
 @Controller('api/test-one')
-export default class TestOneController {
+export class TestOneController {
   @Get(':id')
   get(req: Request, res: Response): any {
     console.log(req.params.id);

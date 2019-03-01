@@ -1,6 +1,6 @@
 import { Document, Schema, Model, model } from 'mongoose';
 
-import { IContact } from '../dtos';
+import { IContact } from '../entities';
 
 export interface IContactModel extends Document {}
 
