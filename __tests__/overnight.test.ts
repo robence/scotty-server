@@ -5,18 +5,6 @@ import App from '../src/app-overnight';
 
 describe('overnight test', () => {
   describe('GET /api/test-two', () => {
-    // it('should retrieve msg', async (done) => {
-    //   const expected = {
-    //     msg: 'get_all_called',
-    //   };
-    //
-    //   let app = App.getApp();
-    //   return request(app)
-    //     .get('/api/test-two')
-    //     .set('Accept', 'application/json')
-    //     .expect(200, expected, done);
-    // });
-
     it('waits a seconds', function(done) {
       async function x(): Promise<number> {
         return 42;
@@ -26,6 +14,21 @@ describe('overnight test', () => {
         expect(returnValue).to.equal(42);
         done();
       });
+    });
+
+    it('should retrieve msg', function(done) {
+      const expected = {
+        msg: 'get_all_called',
+      };
+
+      return request('http://localhost:5000')
+        .get('/api/test-two')
+        .set('Accept', 'application/json')
+        .then(function(resp) {
+          expect(resp.body.msg).to.exist;
+          expect(resp.body.msg).to.equal(expected.msg);
+          done();
+        });
     });
   });
 });
