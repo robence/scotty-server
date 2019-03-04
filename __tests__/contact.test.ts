@@ -1,7 +1,7 @@
 import * as request from 'supertest';
 import { expect } from 'chai';
 
-import App, { app } from '../src/app-overnight';
+import App, { app } from '../src/app';
 
 import { Model, model } from 'mongoose';
 import { IContactModel, ContactSchema } from '../src/models/Contact';
@@ -10,6 +10,11 @@ const Contact: Model<IContactModel> = model<IContactModel>(
   'Contact',
   ContactSchema,
 );
+
+const newContact = {
+  email: 'example@email.com',
+  username: 'johndoe73',
+};
 
 describe('Contact', () => {
   beforeEach((done) => {
@@ -29,11 +34,6 @@ describe('Contact', () => {
 
   describe('POST /api/contacts', () => {
     it('should create a contact', (done) => {
-      const newContact = {
-        email: 'superman@email.com',
-        username: 'clarkkentoriginal',
-      };
-
       request(app)
         .post('/api/contacts/')
         .send(newContact)
@@ -60,14 +60,7 @@ describe('Contact', () => {
     });
 
     it('should retrieve all contacts', async (done) => {
-      const newContact = {
-        email: 'superman@email.com',
-        username: 'clark383',
-      };
-
-      console.log('before');
       const res = await Contact.insertMany(Array(10).fill(newContact));
-      console.log('after');
 
       request(app)
         .get('/api/contacts')
@@ -87,11 +80,6 @@ describe('Contact', () => {
 
   describe('GET /api/contacts/{id}', () => {
     it('should retrieve a contact', async (done) => {
-      const newContact = {
-        email: 'example@email.com',
-        username: 'johndoe73',
-      };
-
       const res = await Contact.insertMany([newContact]);
 
       request(app)
@@ -113,11 +101,6 @@ describe('Contact', () => {
 
   describe('PUT /api/contacts/{id}', () => {
     it('should update a contact', async (done) => {
-      const newContact = {
-        email: 'example@email.com',
-        username: 'johndoe73',
-      };
-
       const updateContact = {
         username: 'janedoeoriginal',
       };
@@ -144,11 +127,6 @@ describe('Contact', () => {
 
   describe('DELETE /api/contacts/{id}', () => {
     it('should delete a contact', async (done) => {
-      const newContact = {
-        email: 'example@email.com',
-        username: 'johndoe73',
-      };
-
       const res = await Contact.insertMany([newContact]);
       const { _id } = res[0];
       const contact = await Contact.findOne(_id);

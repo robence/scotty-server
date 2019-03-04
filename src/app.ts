@@ -1,31 +1,22 @@
-import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import { Server } from '@overnightjs/core';
 import * as mongoose from 'mongoose';
 
-import * as cors from 'cors';
+import ContactController from './controllers/contact-controller';
 
-import { Routes } from './routes/api-routes';
-
-class App {
-  public app: express.Application;
-  public routePrv: Routes;
+class App extends Server {
   public mongoUrl: string =
     process.env.MONGO_URL || 'mongodb://localhost/scotty';
 
   constructor() {
-    this.app = express();
-    this.config();
-    this.routePrv = new Routes(this.app);
-    this.mongoSetup();
-  }
+    super();
 
-  private config(): void {
-    // support application/json type post data
     this.app.use(bodyParser.json());
-    this.app.use(cors());
+    this.app.use(bodyParser.urlencoded({ extended: true }));
 
-    // support application/x-www-form-urlencoded post data
-    this.app.use(bodyParser.urlencoded({ extended: false }));
+    super.addControllers([ContactController]);
+
+    this.mongoSetup();
   }
 
   private mongoSetup(): void {
@@ -39,6 +30,17 @@ class App {
         (err) => console.log('[ERROR] - Cannot connect to MongoDB!'),
       );
   }
-}
 
-export default new App().app;
+  public start(port: number): void {
+    this.app.listen(port, () => {
+      console.log('[SUCCESS] - Express server listening on port', port);
+    });
+  }
+
+  public getApp() {
+    return this.app;
+  }
+}
+const instance = new App();
+export const app = instance.getApp();
+export default instance;
