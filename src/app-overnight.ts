@@ -2,8 +2,7 @@ import * as bodyParser from 'body-parser';
 import { Server } from '@overnightjs/core';
 import * as mongoose from 'mongoose';
 
-import TestOneController from './overnight-js-controllers/test-one-controller';
-import TestTwoController from './overnight-js-controllers/test-two-controller';
+import ContactController from './controllers/contact-controller';
 
 class App extends Server {
   public mongoUrl: string =
@@ -15,7 +14,8 @@ class App extends Server {
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: true }));
 
-    super.addControllers([TestOneController, TestTwoController]);
+    super.addControllers([ContactController]);
+
     this.mongoSetup();
   }
 
@@ -41,5 +41,6 @@ class App extends Server {
     return this.app;
   }
 }
-
-export default new App();
+const instance = new App();
+export const app = instance.getApp();
+export default instance;
