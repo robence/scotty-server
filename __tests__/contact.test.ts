@@ -1,36 +1,29 @@
 import * as request from 'supertest';
 import { expect } from 'chai';
-import * as mocha from 'mocha';
-import Contact from '../src/models/Contact';
-import app from '../src/app';
+
+import App, { app } from '../src/app-overnight';
+
+import { Model, model } from 'mongoose';
+import { IContactModel, ContactSchema } from '../src/models/Contact';
+
+const Contact: Model<IContactModel> = model<IContactModel>(
+  'Contact',
+  ContactSchema,
+);
 
 describe('Contact', () => {
   beforeEach((done) => {
     Contact.deleteMany({}).then(() => done());
   });
 
-  describe('GET /api/contacts', () => {
-    it('should retrieve all contacts', async (done) => {
-      const newContact = {
-        email: 'superman@email.com',
-        username: 'clarkkentoriginal',
-      };
+  it('should have answer to universe', function(done) {
+    async function x(): Promise<number> {
+      return 42;
+    }
 
-      const res = await Contact.insertMany(Array(10).fill(newContact));
-
-      request(app)
-        .get('/api/contacts/')
-        .expect(200)
-        .end((err) => {
-          if (err) {
-            return done(err);
-          }
-          Contact.find({}).then((contacts) => {
-            expect(contacts).to.exist;
-            expect(10).to.equal(contacts.length);
-            done();
-          });
-        });
+    x().then((returnValue) => {
+      expect(returnValue).to.equal(42);
+      done();
     });
   });
 
@@ -58,11 +51,45 @@ describe('Contact', () => {
     });
   });
 
+  describe('GET /api/contacts', () => {
+    it('should work on app', (done) => {
+      request(app)
+        .get('/api/contacts')
+        .expect(200)
+        .end(done);
+    });
+
+    it('should retrieve all contacts', async (done) => {
+      const newContact = {
+        email: 'superman@email.com',
+        username: 'clark383',
+      };
+
+      console.log('before');
+      const res = await Contact.insertMany(Array(10).fill(newContact));
+      console.log('after');
+
+      request(app)
+        .get('/api/contacts')
+        .expect(200)
+        .end((err) => {
+          if (err) {
+            return done(err);
+          }
+          Contact.find({}).then((contacts) => {
+            expect(contacts).to.exist;
+            expect(10).to.equal(contacts.length);
+            done();
+          });
+        });
+    });
+  });
+
   describe('GET /api/contacts/{id}', () => {
     it('should retrieve a contact', async (done) => {
       const newContact = {
-        email: 'superman@email.com',
-        username: 'clarkkentoriginal',
+        email: 'example@email.com',
+        username: 'johndoe73',
       };
 
       const res = await Contact.insertMany([newContact]);
@@ -87,8 +114,8 @@ describe('Contact', () => {
   describe('PUT /api/contacts/{id}', () => {
     it('should update a contact', async (done) => {
       const newContact = {
-        email: 'superman@email.com',
-        username: 'clarkkentoriginal',
+        email: 'example@email.com',
+        username: 'johndoe73',
       };
 
       const updateContact = {
@@ -118,8 +145,8 @@ describe('Contact', () => {
   describe('DELETE /api/contacts/{id}', () => {
     it('should delete a contact', async (done) => {
       const newContact = {
-        email: 'superman@email.com',
-        username: 'clarkkentoriginal',
+        email: 'example@email.com',
+        username: 'johndoe73',
       };
 
       const res = await Contact.insertMany([newContact]);

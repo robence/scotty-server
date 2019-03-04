@@ -1,8 +1,17 @@
 import { Request, Response } from 'express';
+import { Controller, Get, Post, Put, Delete } from '@overnightjs/core';
 
-import Contact from '../models/Contact';
+import { Model, model } from 'mongoose';
+import { IContactModel, ContactSchema } from '../models/Contact';
 
+const Contact: Model<IContactModel> = model<IContactModel>(
+  'Contact',
+  ContactSchema,
+);
+
+@Controller('api/contacts')
 class ContactController {
+  @Get(':id')
   get(req: Request, res: Response) {
     Contact.findById(req.params.id, (err, contact) => {
       if (err) {
@@ -12,6 +21,7 @@ class ContactController {
     });
   }
 
+  @Get()
   getAll(req: Request, res: Response) {
     Contact.get((err, contacts) => {
       if (err) {
@@ -21,13 +31,9 @@ class ContactController {
     });
   }
 
-  create(req: Request, res: Response) {
+  @Post()
+  create(req: Request, res: Response): void {
     const contact = new Contact(req.body);
-
-    //
-    // contact.validate((err) => {
-    //   console.log(err); // Will tell you that null is not allowed.
-    // });
 
     contact.save((err) => {
       if (err) {
@@ -37,7 +43,8 @@ class ContactController {
     });
   }
 
-  update(req: Request, res: Response) {
+  @Put(':id')
+  private update(req: Request, res: Response): void {
     Contact.findOneAndUpdate(
       { _id: req.params.id },
       req.body,
@@ -56,7 +63,8 @@ class ContactController {
     );
   }
 
-  delete(req: Request, res: Response) {
+  @Delete(':id')
+  private delete(req: Request, res: Response): void {
     Contact.deleteOne({ _id: req.params.id }, (err) => {
       if (err) {
         res.send(err);
