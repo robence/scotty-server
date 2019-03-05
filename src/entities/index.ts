@@ -1,6 +1,6 @@
 import { IContact } from './contact';
-import { IBaseEntry, ITemplateEntry, IAccount } from './entry';
-import { IMainCategory, ISubCategory } from './category';
+import { IRecord, ITemplateRecord } from './record';
+import { ICategory } from './category';
 import { ITag } from './tag';
 import { IRegister, ILogin, IAccount, IUser } from './user';
 
@@ -14,14 +14,12 @@ export interface IBaseModel {
 
 export {
   IContact,
-  IBaseEntry,
-  ITemplateEntry,
-  IAccount,
-  IMainCategory,
-  ISubCategory,
+  IRecord,
+  // ITemplateRecord,
+  ICategory,
   ITag,
-  IRegister,
-  ILogin,
+  // IRegister,
+  // ILogin,
   IAccount,
   IUser,
 };

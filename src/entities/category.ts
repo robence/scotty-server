@@ -1,9 +1,10 @@
 import { IBaseModel } from '.';
 
-export interface IMainCategory extends IBaseModel {
-  categoryName: string;
+interface SubCategory extends IBaseModel {
+  name: string;
 }
 
-export interface SubCategory extends IBaseCategory {
-  mainCategory: IMainCategory;
+export interface ICategory extends IBaseModel {
+  name: string;
+  subCategories?: SubCategory[];
 }

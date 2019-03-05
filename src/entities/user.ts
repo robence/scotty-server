@@ -22,5 +22,5 @@ export interface IUser extends IBaseModel {
 
 export interface IAccount extends IBaseModel {
   name: string;
-  user: IUser;
+  user?: IUser;
 }

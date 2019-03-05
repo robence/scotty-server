@@ -2,18 +2,18 @@ import { Request, Response } from 'express';
 import { Controller, Get, Post, Put, Delete } from '@overnightjs/core';
 
 import { Model, model } from 'mongoose';
-import { IContactModel, ContactSchema } from '../models/Contact';
+import { IAccountModel, AccountSchema } from '../models/Account';
 
-const Contact: Model<IContactModel> = model<IContactModel>(
-  'Contact',
-  ContactSchema,
+const Account: Model<IAccountModel> = model<IAccountModel>(
+  'Account',
+  AccountSchema,
 );
 
-@Controller('api/contacts')
-class ContactController {
+@Controller('api/accounts')
+class AccountController {
   @Get(':id')
   get(req: Request, res: Response) {
-    Contact.findById(req.params.id, (err, contact) => {
+    Account.findById(req.params.id, (err, contact) => {
       if (err) {
         res.send(err);
       }
@@ -23,17 +23,17 @@ class ContactController {
 
   @Get()
   getAll(req: Request, res: Response) {
-    Contact.get((err, contacts) => {
+    Account.get((err, accounts) => {
       if (err) {
         res.send(err);
       }
-      res.json(contacts);
+      res.json(accounts);
     });
   }
 
   @Post()
   create(req: Request, res: Response): void {
-    const contact = new Contact(req.body);
+    const contact = new Account(req.body);
 
     contact.save((err) => {
       if (err) {
@@ -45,7 +45,7 @@ class ContactController {
 
   @Put(':id')
   private update(req: Request, res: Response): void {
-    Contact.findOneAndUpdate(
+    Account.findOneAndUpdate(
       { _id: req.params.id },
       req.body,
       { new: true },
@@ -65,7 +65,7 @@ class ContactController {
 
   @Delete(':id')
   private delete(req: Request, res: Response): void {
-    Contact.deleteOne({ _id: req.params.id }, (err) => {
+    Account.deleteOne({ _id: req.params.id }, (err) => {
       if (err) {
         res.send(err);
       }
@@ -74,5 +74,5 @@ class ContactController {
   }
 }
 
-const instance = new ContactController();
+const instance = new AccountController();
 export default instance;

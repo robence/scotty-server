@@ -2,62 +2,62 @@ import { Request, Response } from 'express';
 import { Controller, Get, Post, Put, Delete } from '@overnightjs/core';
 
 import { Model, model } from 'mongoose';
-import { IContactModel, ContactSchema } from '../models/Contact';
+import { ICategoryModel, CategorySchema } from '../models/Category';
 
-const Contact: Model<IContactModel> = model<IContactModel>(
-  'Contact',
-  ContactSchema,
+const Category: Model<ICategoryModel> = model<ICategoryModel>(
+  'Category',
+  CategorySchema,
 );
 
-@Controller('api/contacts')
-class ContactController {
+@Controller('api/categories')
+class CategoryController {
   @Get(':id')
   get(req: Request, res: Response) {
-    Contact.findById(req.params.id, (err, contact) => {
+    Category.findById(req.params.id, (err, category) => {
       if (err) {
         res.send(err);
       }
-      res.json(contact);
+      res.json(category);
     });
   }
 
   @Get()
   getAll(req: Request, res: Response) {
-    Contact.get((err, contacts) => {
+    Category.get((err, categories) => {
       if (err) {
         res.send(err);
       }
-      res.json(contacts);
+      res.json(categories);
     });
   }
 
   @Post()
   create(req: Request, res: Response): void {
-    const contact = new Contact(req.body);
+    const category = new Category(req.body);
 
-    contact.save((err) => {
+    category.save((err) => {
       if (err) {
         return res.send(err);
       }
-      res.json(contact);
+      res.json(category);
     });
   }
 
   @Put(':id')
   private update(req: Request, res: Response): void {
-    Contact.findOneAndUpdate(
+    Category.findOneAndUpdate(
       { _id: req.params.id },
       req.body,
       { new: true },
-      (err, contact) => {
+      (err, category) => {
         if (err) {
           res.send(err);
         }
-        contact.save((err) => {
+        category.save((err) => {
           if (err) {
             res.json(err);
           }
-          res.json(contact);
+          res.json(category);
         });
       },
     );
@@ -65,7 +65,7 @@ class ContactController {
 
   @Delete(':id')
   private delete(req: Request, res: Response): void {
-    Contact.deleteOne({ _id: req.params.id }, (err) => {
+    Category.deleteOne({ _id: req.params.id }, (err) => {
       if (err) {
         res.send(err);
       }
@@ -74,5 +74,5 @@ class ContactController {
   }
 }
 
-const instance = new ContactController();
+const instance = new CategoryController();
 export default instance;

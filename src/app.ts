@@ -1,44 +1,57 @@
 import * as bodyParser from 'body-parser';
 import { Server } from '@overnightjs/core';
 import * as mongoose from 'mongoose';
+import * as cors from 'cors';
+import * as dotenv from 'dotenv';
 
 import ContactController from './controllers/contact-controller';
+import AccountController from './controllers/account-controller';
+
+const { MONGO_URL, PORT } = process.env;
 
 class App extends Server {
-  public mongoUrl: string =
-    process.env.MONGO_URL || 'mongodb://localhost/scotty';
+  public env;
 
   constructor() {
     super();
 
-    this.app.use(bodyParser.json());
-    this.app.use(bodyParser.urlencoded({ extended: true }));
-
-    super.addControllers([ContactController]);
-
+    this.config();
+    super.addControllers([ContactController, AccountController]);
     this.mongoSetup();
+  }
+
+  public start(): void {
+    this.app.listen(PORT || 5000, () => {
+      console.log('[SUCCESS] - Express server listening on port', PORT || 5000);
+    });
+  }
+
+  public getApp() {
+    return this.app;
+  }
+
+  private config(): void {
+    this.app
+      .use(cors())
+      .use(bodyParser.json())
+      .use(bodyParser.urlencoded({ extended: true }))
+      .use(function(err, req, res, next) {
+        console.error(err.stack);
+        res.status(500).send('Something broke!');
+      });
   }
 
   private mongoSetup(): void {
     const options = { useNewUrlParser: true };
     mongoose.Promise = global.Promise;
     mongoose.set('useCreateIndex', true);
+
     mongoose
-      .connect(this.mongoUrl, options)
+      .connect(MONGO_URL, options)
       .then(
         () => console.log('[SUCCESS] - Connected to MongoDB.'),
         (err) => console.log('[ERROR] - Cannot connect to MongoDB!'),
       );
-  }
-
-  public start(port: number): void {
-    this.app.listen(port, () => {
-      console.log('[SUCCESS] - Express server listening on port', port);
-    });
-  }
-
-  public getApp() {
-    return this.app;
   }
 }
 const instance = new App();

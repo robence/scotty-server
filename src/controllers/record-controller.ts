@@ -2,62 +2,59 @@ import { Request, Response } from 'express';
 import { Controller, Get, Post, Put, Delete } from '@overnightjs/core';
 
 import { Model, model } from 'mongoose';
-import { IContactModel, ContactSchema } from '../models/Contact';
+import { IRecordModel, RecordSchema } from '../models/Record';
 
-const Contact: Model<IContactModel> = model<IContactModel>(
-  'Contact',
-  ContactSchema,
-);
+const Record: Model<IRecordModel> = model<IRecordModel>('Record', RecordSchema);
 
-@Controller('api/contacts')
-class ContactController {
+@Controller('api/records')
+class RecordController {
   @Get(':id')
   get(req: Request, res: Response) {
-    Contact.findById(req.params.id, (err, contact) => {
+    Record.findById(req.params.id, (err, record) => {
       if (err) {
         res.send(err);
       }
-      res.json(contact);
+      res.json(record);
     });
   }
 
   @Get()
   getAll(req: Request, res: Response) {
-    Contact.get((err, contacts) => {
+    Record.get((err, records) => {
       if (err) {
         res.send(err);
       }
-      res.json(contacts);
+      res.json(records);
     });
   }
 
   @Post()
   create(req: Request, res: Response): void {
-    const contact = new Contact(req.body);
+    const record = new Record(req.body);
 
-    contact.save((err) => {
+    record.save((err) => {
       if (err) {
         return res.send(err);
       }
-      res.json(contact);
+      res.json(record);
     });
   }
 
   @Put(':id')
   private update(req: Request, res: Response): void {
-    Contact.findOneAndUpdate(
+    Record.findOneAndUpdate(
       { _id: req.params.id },
       req.body,
       { new: true },
-      (err, contact) => {
+      (err, record) => {
         if (err) {
           res.send(err);
         }
-        contact.save((err) => {
+        record.save((err) => {
           if (err) {
             res.json(err);
           }
-          res.json(contact);
+          res.json(record);
         });
       },
     );
@@ -65,7 +62,7 @@ class ContactController {
 
   @Delete(':id')
   private delete(req: Request, res: Response): void {
-    Contact.deleteOne({ _id: req.params.id }, (err) => {
+    Record.deleteOne({ _id: req.params.id }, (err) => {
       if (err) {
         res.send(err);
       }
@@ -74,5 +71,5 @@ class ContactController {
   }
 }
 
-const instance = new ContactController();
+const instance = new RecordController();
 export default instance;
