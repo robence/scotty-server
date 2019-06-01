@@ -6,6 +6,7 @@ import * as dotenv from 'dotenv';
 
 import ContactController from './controllers/contact-controller';
 import AccountController from './controllers/account-controller';
+import CategoryController from './controllers/category-controller';
 
 const { MONGO_URL, PORT } = process.env;
 
@@ -16,7 +17,7 @@ class App extends Server {
     super();
 
     this.config();
-    super.addControllers([ContactController, AccountController]);
+    this.setupRoutes();
     this.mongoSetup();
   }
 
@@ -39,6 +40,14 @@ class App extends Server {
         console.error(err.stack);
         res.status(500).send('Something broke!');
       });
+  }
+
+  private setupRoutes() {
+    super.addControllers([
+      ContactController,
+      AccountController,
+      CategoryController,
+    ]);
   }
 
   private mongoSetup(): void {

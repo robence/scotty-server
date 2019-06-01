@@ -1,4 +1,4 @@
-import { IBaseModel } from '.';
+import { IBaseModel, IRecord } from '.';
 
 export interface IRegister extends IBaseModel {
   name: string;
@@ -23,4 +23,11 @@ export interface IUser extends IBaseModel {
 export interface IAccount extends IBaseModel {
   name: string;
   user?: IUser;
+}
+
+interface IUser2 extends IBaseModel {
+  accounts: SzamlaAccount;
+}
+interface SzamlaAccount extends IBaseModel {
+  expenses: IRecord[];
 }

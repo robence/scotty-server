@@ -1,4 +1,4 @@
-import { IBaseModel, ICategory } from '.';
+import { IBaseModel, ICategory, ITag, IUser } from '.';
 
 export interface IRecord extends IBaseModel {
   amount: number;
@@ -12,3 +12,13 @@ export interface IRecord extends IBaseModel {
 export interface ITemplateRecord extends IRecord {
   user: IUser;
 }
+
+/*
+
+test it
+export interface IRecord extends IBaseModel {
+  amount: number;
+  category: IBaseCategory;
+}
+
+*/

@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "jest --detectOpenHandles --forceExit",
-    "server-start": "ts-node src/server.ts",
+    "server-start": "ts-node src/index.ts",
     "server-dev": "node ./node_modules/nodemon/bin/nodemon.js",
     "server-build": "tsc",
     "format": "prettier-eslint --write \"src/**/*.js\""
@@ -16,6 +16,7 @@
     "@overnightjs/core": "^1.4.1",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
+    "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "mongoose": "^5.4.13",
     "mongoose-unique-validator": "^2.0.2",
