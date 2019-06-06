@@ -5,15 +5,19 @@ import * as cors from 'cors';
 import * as dotenv from 'dotenv';
 
 import ContactController from './controllers/contact-controller';
-import AccountController from './controllers/account-controller';
-import CategoryController from './controllers/category-controller';
+import { Application } from 'express';
+
+export interface IMyInt {
+  get(): any;
+  post(p: string): any;
+};
 
 const { MONGO_URL, PORT } = process.env;
 
 class App extends Server {
-  public env;
+  public env: any;
 
-  constructor() {
+  public constructor() {
     super();
 
     this.config();
@@ -22,13 +26,19 @@ class App extends Server {
   }
 
   public start(): void {
-    this.app.listen(PORT || 5000, () => {
-      console.log('[SUCCESS] - Express server listening on port', PORT || 5000);
-    });
+    this.app.listen(
+      PORT || 5000,
+      (): void => {
+        console.log(
+          '[SUCCESS] - Express server listening on port',
+          PORT || 5000,
+        );
+      },
+    );
   }
 
-  public getApp() {
-    return this.app;
+  public getApp(): Application & IMyInt {
+    return this.app as Application & IMyInt;
   }
 
   private config(): void {
@@ -36,23 +46,24 @@ class App extends Server {
       .use(cors())
       .use(bodyParser.json())
       .use(bodyParser.urlencoded({ extended: true }))
-      .use(function(err, req, res, next) {
-        console.error(err.stack);
-        res.status(500).send('Something broke!');
-      });
+      .use(
+        (err, req, res, next): void => {
+          console.error(err.stack);
+          res.status(500).send('Something broke!');
+        },
+      );
   }
 
-  private setupRoutes() {
+  private setupRoutes(): void {
     super.addControllers([
       ContactController,
-      AccountController,
-      CategoryController,
     ]);
   }
 
   private mongoSetup(): void {
     const options = { useNewUrlParser: true };
-    mongoose.Promise = global.Promise;
+    // may not be needed
+    // mongoose.Promise = global.Promise;
     mongoose.set('useCreateIndex', true);
 
     mongoose

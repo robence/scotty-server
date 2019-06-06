@@ -1,17 +1,11 @@
 import * as request from 'supertest';
 import { expect } from 'chai';
 
-import { Model, model } from 'mongoose';
 import { app } from '../src/app';
+import { IContact } from '../src/entities';
+import Contact from '../src/models/Contact';
 
-import { IContactModel, ContactSchema } from '../src/models/Contact';
-
-const Contact: Model<IContactModel> = model<IContactModel>(
-  'Contact',
-  ContactSchema,
-);
-
-const newContact = {
+const newContact: IContact = {
   email: 'example@email.com',
   username: 'johndoe73',
 };
@@ -21,7 +15,7 @@ describe('Contact', () => {
     Contact.deleteMany({}).then(() => done());
   });
 
-  it('should have answer to universe', function(done) {
+  it('should have answer to universe', function (done) {
     async function x(): Promise<number> {
       return 42;
     }
@@ -83,7 +77,7 @@ describe('Contact', () => {
       const res = await Contact.insertMany([newContact]);
 
       request(app)
-        .get(`/api/contacts/${res._id}`)
+        .get(`/api/contacts/${res[0]._id}`)
         .expect(200)
         .end((err) => {
           if (err) {

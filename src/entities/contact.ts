@@ -1,6 +1,6 @@
 import { IBaseModel } from '.';
 
-export interface IContact extends IBaseModel {
+export default interface IContact {
   username: string;
   email: string;
 }

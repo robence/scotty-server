@@ -1,46 +1,48 @@
 import { Request, Response } from 'express';
 import { Controller, Get, Post, Put, Delete } from '@overnightjs/core';
 
-import { Model, model } from 'mongoose';
-import { IContactModel, ContactSchema } from '../models/Contact';
-
-const Contact: Model<IContactModel> = model<IContactModel>(
-  'Contact',
-  ContactSchema,
-);
+import Contact from '../models/Contact';
 
 @Controller('api/contacts')
 class ContactController {
   @Get(':id')
-  get(req: Request, res: Response) {
-    Contact.findById(req.params.id, (err, contact) => {
-      if (err) {
-        res.send(err);
-      }
-      res.json(contact);
-    });
+  private get(req: Request, res: Response): void {
+    Contact.findById(
+      req.params.id,
+      (err, contact): void => {
+        if (err) {
+          res.send(err);
+        }
+        res.json(contact);
+      },
+    );
   }
 
   @Get()
-  getAll(req: Request, res: Response) {
-    Contact.get((err, contacts) => {
+  private getAll(req: Request, res: Response): void {
+    const findAll = (err, contacts): void => {
       if (err) {
         res.send(err);
       }
       res.json(contacts);
-    });
+    };
+
+    Contact.find(findAll);
+    // .limit(10);
   }
 
   @Post()
-  create(req: Request, res: Response): void {
+  private create(req: Request, res: Response): void {
     const contact = new Contact(req.body);
 
-    contact.save((err) => {
-      if (err) {
-        return res.send(err);
-      }
-      res.json(contact);
-    });
+    contact.save(
+      (err): void => {
+        if (err) {
+          res.send(err);
+        }
+        res.json(contact);
+      },
+    );
   }
 
   @Put(':id')
@@ -49,28 +51,33 @@ class ContactController {
       { _id: req.params.id },
       req.body,
       { new: true },
-      (err, contact) => {
-        if (err) {
-          res.send(err);
+      (errFind, contact): void => {
+        if (errFind) {
+          res.send(errFind);
         }
-        contact.save((err) => {
-          if (err) {
-            res.json(err);
-          }
-          res.json(contact);
-        });
+        contact.save(
+          (errSave): void => {
+            if (errSave) {
+              res.json(errSave);
+            }
+            res.json(contact);
+          },
+        );
       },
     );
   }
 
   @Delete(':id')
   private delete(req: Request, res: Response): void {
-    Contact.deleteOne({ _id: req.params.id }, (err) => {
-      if (err) {
-        res.send(err);
-      }
-      res.json(req.params.id);
-    });
+    Contact.deleteOne(
+      { _id: req.params.id },
+      (err): void => {
+        if (err) {
+          res.send(err);
+        }
+        res.json(req.params.id);
+      },
+    );
   }
 }
 
