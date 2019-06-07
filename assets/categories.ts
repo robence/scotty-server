@@ -1,4 +1,4 @@
-module.exports = [
+const categories = [
   {
     _id: '1',
     name: 'Food & Drinks',
@@ -28,3 +28,5 @@ module.exports = [
     name: 'Travel',
   },
 ];
+
+export default categories;

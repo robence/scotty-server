@@ -2,21 +2,15 @@ import * as bodyParser from 'body-parser';
 import { Server } from '@overnightjs/core';
 import * as mongoose from 'mongoose';
 import * as cors from 'cors';
+// eslint-disable-next-line
 import * as dotenv from 'dotenv';
 
-import ContactController from './controllers/contact-controller';
 import { Application } from 'express';
-
-export interface IMyInt {
-  get(): any;
-  post(p: string): any;
-};
+import ContactController from './controllers/contact-controller';
 
 const { MONGO_URL, PORT } = process.env;
 
 class App extends Server {
-  public env: any;
-
   public constructor() {
     super();
 
@@ -29,6 +23,7 @@ class App extends Server {
     this.app.listen(
       PORT || 5000,
       (): void => {
+        // eslint-disable-next-line no-console
         console.log(
           '[SUCCESS] - Express server listening on port',
           PORT || 5000,
@@ -37,8 +32,8 @@ class App extends Server {
     );
   }
 
-  public getApp(): Application & IMyInt {
-    return this.app as Application & IMyInt;
+  public getApp(): Application {
+    return this.app;
   }
 
   private config(): void {
@@ -47,7 +42,9 @@ class App extends Server {
       .use(bodyParser.json())
       .use(bodyParser.urlencoded({ extended: true }))
       .use(
+        // eslint-disable-next-line
         (err, req, res, next): void => {
+          // eslint-disable-next-line no-console
           console.error(err.stack);
           res.status(500).send('Something broke!');
         },
@@ -55,23 +52,19 @@ class App extends Server {
   }
 
   private setupRoutes(): void {
-    super.addControllers([
-      ContactController,
-    ]);
+    super.addControllers([ContactController]);
   }
 
   private mongoSetup(): void {
     const options = { useNewUrlParser: true };
-    // may not be needed
-    // mongoose.Promise = global.Promise;
     mongoose.set('useCreateIndex', true);
 
-    mongoose
-      .connect(MONGO_URL, options)
-      .then(
-        () => console.log('[SUCCESS] - Connected to MongoDB.'),
-        (err) => console.log('[ERROR] - Cannot connect to MongoDB!'),
-      );
+    mongoose.connect(MONGO_URL, options).then(
+      // eslint-disable-next-line no-console
+      (): void => console.log('[SUCCESS] - Connected to MongoDB.'),
+      // eslint-disable-next-line no-console
+      (): void => console.log('[ERROR] - Cannot connect to MongoDB!'),
+    );
   }
 }
 const instance = new App();

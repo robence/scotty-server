@@ -2,7 +2,7 @@ import * as request from 'supertest';
 import { expect } from 'chai';
 
 import { app } from '../src/app';
-import { IContact } from '../src/entities';
+import IContact from '../src/types';
 import Contact from '../src/models/Contact';
 
 const newContact: IContact = {

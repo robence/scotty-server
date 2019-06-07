@@ -1,4 +1,4 @@
-module.exports = [
+const subCategories =  [
   {
     mainCategory: '1',
     name: 'Meal',
@@ -116,3 +116,5 @@ module.exports = [
     name: 'Taxi',
   },
 ];
+
+export default subCategories;

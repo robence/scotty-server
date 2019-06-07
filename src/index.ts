@@ -7,6 +7,8 @@ if (process.env.NODE_ENV !== 'production') {
     throw result.error;
   }
 }
+
+// eslint-disable-next-line import/first
 import App from './app';
 
 App.start();

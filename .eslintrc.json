@@ -7,29 +7,28 @@
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 2018
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "project": "./tsconfig.json",
+    "ecmaFeatures": {
+      "legacyDecorators": true,
+      "modules": true
+    }
   },
   "rules": {
     "prettier/prettier": "error",
-    "no-unexpected-multiline": "error",
-    "indent": ["error", 2],
     "quotes": [2, "single", "avoid-escape"],
     "ignoreTemplateLiterals": true,
-    "padded-blocks": ["error", "never"],
     "object-curly-newline": ["error", { "consistent": true }],
     "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
     "arrow-parens": ["error", "always"],
     "arrow-body-style": ["error", "as-needed"],
-
-    "semi": "off",
-    "no-undef": "off",
-    "import/first": "off",
-    "implicit-arrow-linebreak": "off",
     "class-methods-use-this": "off",
-    "no-console": "warn",
-
-    "@typescript-eslint/interface-name-prefix": ["error", "always"],
-    "@typescript-eslint/no-empty-interface": "off"
+    "semi": "off",
+    "indent": "off",
+    "@typescript-eslint/semi": ["error"],
+    "@typescript-eslint/indent": ["error", 2],
+    "@typescript-eslint/interface-name-prefix": ["error", "always"]
   },
   "plugins": ["prettier", "@typescript-eslint"],
   "settings": {
