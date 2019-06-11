@@ -5,6 +5,7 @@ import { app } from '../src/app';
 import IContact from '../src/types';
 import Contact from '../src/models/Contact';
 
+const baseUrl = '/api/contacts';
 const newContact: IContact = {
   email: 'example@email.com',
   username: 'johndoe73',
@@ -15,40 +16,43 @@ describe('Contact', () => {
     Contact.deleteMany({}).then(() => done());
   });
 
-  it('should have answer to universe', function (done) {
+  beforeAll((done /* call it or remove it*/) => {
+    done(); // calling it
+  });
+
+  it('should have answer to universe', async (done) => {
     async function x(): Promise<number> {
       return 42;
     }
 
-    x().then((returnValue) => {
-      expect(returnValue).to.equal(42);
-      done();
-    });
+    const returnValue = await x()
+    expect(returnValue).to.equal(42);
+    done();
   });
 
-  describe('POST /api/contacts', () => {
-    it('should create a contact', (done) => {
+  describe(`POST ${baseUrl}`, () =>
+    it('should create a contact', async (done) => {
       request(app)
-        .post('/api/contacts/')
+        .post(`${baseUrl}/`)
         .send(newContact)
         .expect(200)
-        .end((err) => {
+        .end(async (err) => {
           if (err) {
             return done(err);
           }
-          Contact.findOne({ email: newContact.email }).then((contact) => {
-            expect(contact).to.exist;
-            expect(contact.username).to.equal(newContact.username);
-            done();
-          });
-        });
-    });
-  });
+          const contact = await Contact.findOne({ email: newContact.email })
+          expect(contact).to.exist;
+          expect(contact.username).to.equal(newContact.username);
+          done();
 
-  describe('GET /api/contacts', () => {
+        });
+    })
+  );
+
+  describe(`GET ${baseUrl}`, () => {
     it('should work on app', (done) => {
       request(app)
-        .get('/api/contacts')
+        .get(`${baseUrl}`)
         .expect(200)
         .end(done);
     });
@@ -57,7 +61,7 @@ describe('Contact', () => {
       const res = await Contact.insertMany([newContact]);
 
       request(app)
-        .get('/api/contacts')
+        .get(`${baseUrl}`)
         .expect(200)
         .end((err) => {
           if (err) {
@@ -72,12 +76,12 @@ describe('Contact', () => {
     });
   });
 
-  describe('GET /api/contacts/{id}', () => {
+  describe(`GET ${baseUrl}/{id}`, () => {
     it('should retrieve a contact', async (done) => {
-      const res = await Contact.insertMany([newContact]);
+      const [res] = await Contact.insertMany([newContact]);
 
       request(app)
-        .get(`/api/contacts/${res[0]._id}`)
+        .get(`${baseUrl}/${res._id}`)
         .expect(200)
         .end((err) => {
           if (err) {
@@ -93,23 +97,24 @@ describe('Contact', () => {
     });
   });
 
-  describe('PUT /api/contacts/{id}', () => {
+  describe('PUT ${baseUrl}/{id}', () => {
     it('should update a contact', async (done) => {
       const updateContact = {
         username: 'janedoeoriginal',
       };
 
-      const res = await Contact.insertMany([newContact]);
+      const [res] = await Contact.insertMany([newContact]);
+      const { _id } = res;
 
       request(app)
-        .put(`/api/contacts/${res[0]._id}`)
+        .put(`${baseUrl}/${_id}`)
         .send(updateContact)
         .expect(200)
         .end((err) => {
           if (err) {
             return done(err);
           }
-          Contact.findOne({ _id: res[0]._id }).then((contact) => {
+          Contact.findOne({ _id }).then((contact) => {
             expect(contact).to.exist;
             expect(contact.email).to.equal(newContact.email);
             expect(contact.username).to.equal(updateContact.username);
@@ -119,19 +124,20 @@ describe('Contact', () => {
     });
   });
 
-  describe('DELETE /api/contacts/{id}', () => {
+  describe(`DELETE ${baseUrl}/{id}`, () => {
     it('should delete a contact', async (done) => {
-      const res = await Contact.insertMany([newContact]);
-      const { _id } = res[0];
+      const [res] = await Contact.insertMany([newContact]);
+      const { _id } = res;
+
       const contact = await Contact.findOne(_id);
 
       expect(contact).to.exist;
       expect(contact._id).to.exist;
 
       request(app)
-        .delete(`/api/contacts/${_id}`)
+        .delete(`${baseUrl}/${_id}`)
         .expect(200)
-        .end((err) => {
+        .end((err: any) => {
           if (err) {
             return done(err);
           }
