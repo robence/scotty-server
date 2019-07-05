@@ -36,6 +36,13 @@ class App extends Server {
     return this.app;
   }
 
+  public disconnect(): Promise<void> {
+    return mongoose.disconnect().then(
+      // eslint-disable-next-line no-console
+      (): void => console.log('[SUCCESS] - Disconnected from MongoDB.'),
+    );
+  }
+
   private config(): void {
     this.app
       .use(cors())
@@ -68,5 +75,4 @@ class App extends Server {
   }
 }
 const instance = new App();
-export const app = instance.getApp();
 export default instance;

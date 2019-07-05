@@ -1,10 +1,11 @@
 import * as request from 'supertest';
 import { expect } from 'chai';
 
-import { app } from '../src/app';
+import instance  from '../src/app';
 import IContact from '../src/types';
 import Contact from '../src/models/Contact';
 
+const app = instance.getApp();
 const baseUrl = '/api/contacts';
 const newContact: IContact = {
   email: 'example@email.com',
@@ -18,6 +19,12 @@ describe('Contact', () => {
 
   beforeAll((done /* call it or remove it*/) => {
     done(); // calling it
+  });
+
+  afterAll((done) => { 
+    instance.disconnect().then(() => { 
+      done();
+    });
   });
 
   it('should have answer to universe', async (done) => {
