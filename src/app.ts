@@ -36,11 +36,9 @@ class App extends Server {
     return this.app;
   }
 
-  public disconnect(): Promise<void> {
-    return mongoose.disconnect().then(
-      // eslint-disable-next-line no-console
-      (): void => console.log('[SUCCESS] - Disconnected from MongoDB.'),
-    );
+  public async disconnect(): Promise<void> {
+    await mongoose.disconnect();
+    return console.log('[SUCCESS] - Disconnected from MongoDB.');
   }
 
   private config(): void {
