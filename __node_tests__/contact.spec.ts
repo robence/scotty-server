@@ -2,27 +2,26 @@ import * as request from 'supertest';
 import { expect } from 'chai';
 
 import instance  from '../src/app';
-import IContact from '../src/features/Contact/contact-type';
-import Contact from '../src/features/Contact/contact-model';
+import { ContactType, ContactModel } from '../src/features/Contact';
 
 const app = instance.getApp();
 
 const baseUrl = '/api'
 const contactUrl = `${baseUrl}/contacts`;
 
-const newContact: IContact = {
+const newContact: ContactType = {
   email: 'example@email.com',
   username: 'johndoe73',
 };
 
-const newContact2: IContact = {
+const newContact2: ContactType = {
   email: 'example2@email.com',
   username: 'janedoe73',
 }
 
 describe('Contact', () => {
   beforeEach((done) => {
-    Contact.deleteMany({}).then(() => done());
+    ContactModel.deleteMany({}).then(() => done());
   });
 
   beforeAll((done /* call it or remove it*/) => {
@@ -45,7 +44,7 @@ describe('Contact', () => {
           if (err) {
             return done(err);
           }
-          const contact = await Contact.findOne({ email: newContact.email })
+          const contact = await ContactModel.findOne({ email: newContact.email })
           expect(contact).to.exist;
           expect(contact.username).to.equal(newContact.username);
           done();
@@ -56,7 +55,7 @@ describe('Contact', () => {
 
   describe(`GET ${contactUrl}`, () => {
     it('Should retrieve all contacts', async (done) => {
-      await Contact.insertMany([newContact, newContact2]);
+      await ContactModel.insertMany([newContact, newContact2]);
       
       request(app)
         .get(contactUrl)
@@ -73,7 +72,7 @@ describe('Contact', () => {
 
   describe(`GET ${contactUrl}/{id}`, () => {
     it('should retrieve a contact', async (done) => {
-      const [res] = await Contact.insertMany([newContact]);
+      const [res] = await ContactModel.insertMany([newContact]);
 
       request(app)
         .get(`${contactUrl}/${res._id}`)
@@ -82,7 +81,7 @@ describe('Contact', () => {
           if (err) {
             return done(err);
           }
-          Contact.findOne({ email: newContact.email }).then((contact) => {
+          ContactModel.findOne({ email: newContact.email }).then((contact) => {
             expect(contact).to.exist;
             expect(contact._id).to.exist;
             expect(contact.username).to.equal(newContact.username);
@@ -98,7 +97,7 @@ describe('Contact', () => {
         username: 'janedoeoriginal',
       };
 
-      const [res] = await Contact.insertMany([newContact]);
+      const [res] = await ContactModel.insertMany([newContact]);
       const { _id } = res;
 
       request(app)
@@ -109,7 +108,7 @@ describe('Contact', () => {
           if (err) {
             return done(err);
           }
-          Contact.findOne({ _id }).then((contact) => {
+          ContactModel.findOne({ _id }).then((contact) => {
             expect(contact).to.exist;
             expect(contact.email).to.equal(newContact.email);
             expect(contact.username).to.equal(updateContact.username);
@@ -121,10 +120,10 @@ describe('Contact', () => {
 
   describe(`DELETE ${contactUrl}/{id}`, () => {
     it('should delete a contact', async (done) => {
-      const [res] = await Contact.insertMany([newContact]);
+      const [res] = await ContactModel.insertMany([newContact]);
       const { _id } = res;
 
-      const contact = await Contact.findOne(_id);
+      const contact = await ContactModel.findOne(_id);
 
       expect(contact).to.exist;
       expect(contact._id).to.exist;
@@ -136,7 +135,7 @@ describe('Contact', () => {
           if (err) {
             return done(err);
           }
-          Contact.findOne(_id).then((contactt) => {
+          ContactModel.findOne(_id).then((contactt) => {
             expect(contactt).to.not.exist;
             done();
           });

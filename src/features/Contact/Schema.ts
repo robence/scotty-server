@@ -1,6 +1,10 @@
 import { Document, Schema, Model, model } from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
-import IContact from './contact-type';
+
+export type ContactType = {
+  username: string;
+  email: string;
+};
 
 const ContactSchema = new Schema(
   {
@@ -27,9 +31,8 @@ const ContactSchema = new Schema(
 
 ContactSchema.plugin(uniqueValidator);
 
-const Contact: Model<Document & IContact> = model<Document & IContact>(
+// prettier-ignore
+export const ContactModel: Model<Document & ContactType> = model<Document & ContactType>(
   'Contact',
-  ContactSchema,
+  ContactSchema
 );
-
-export default Contact;

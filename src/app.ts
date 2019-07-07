@@ -6,7 +6,7 @@ import * as cors from 'cors';
 import * as dotenv from 'dotenv';
 
 import { Application } from 'express';
-import ContactController from './features/Contact/contact-controller';
+import ContactController from './features/Contact/Controller';
 
 const { MONGO_URL, PORT } = process.env;
 
@@ -20,16 +20,10 @@ class App extends Server {
   }
 
   public start(): void {
-    this.app.listen(
-      PORT || 5000,
-      (): void => {
-        // eslint-disable-next-line no-console
-        console.log(
-          '[SUCCESS] - Express server listening on port',
-          PORT || 5000,
-        );
-      },
-    );
+    this.app.listen(PORT || 5000, (): void => {
+      // eslint-disable-next-line no-console
+      console.log('[SUCCESS] - Express server listening on port', PORT || 5000);
+    });
   }
 
   public getApp(): Application {
