@@ -6,7 +6,7 @@ import * as cors from 'cors';
 import * as dotenv from 'dotenv';
 
 import { Application } from 'express';
-import ContactController from './controllers/contact-controller';
+import ContactController from './Contact/contact-controller';
 
 const { MONGO_URL, PORT } = process.env;
 
@@ -38,6 +38,7 @@ class App extends Server {
 
   public async disconnect(): Promise<void> {
     await mongoose.disconnect();
+    // eslint-disable-next-line no-console
     return console.log('[SUCCESS] - Disconnected from MongoDB.');
   }
 

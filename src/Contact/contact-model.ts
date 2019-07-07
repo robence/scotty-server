@@ -1,8 +1,8 @@
 import { Document, Schema, Model, model } from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
-import IContact from '../types';
+import IContact from './contact-types';
 
-export const ContactSchema = new Schema(
+const ContactSchema = new Schema(
   {
     username: {
       type: String,

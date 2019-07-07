@@ -1,34 +1,29 @@
 import { Request, Response } from 'express';
 import { Controller, Get, Post, Put, Delete } from '@overnightjs/core';
 
-import Contact from '../models/Contact';
+import Contact from './contact-model';
+import ContactService from './contact-service';
 
 @Controller('api/contacts')
 class ContactController {
+  // @Get(':id')
+  // private async get(req: Request, res: Response) {
+  //   const { contact, status, errMsg } = await ContactService.findById(req.params.id);
+  //   res.status(status).send(contact || errMsg);
+  // }
+
   @Get(':id')
-  private get(req: Request, res: Response): void {
-    Contact.findById(
+  private async get(req: Request, res: Response) {
+    const { statusCode, payload } = await ContactService.findById(
       req.params.id,
-      (err, contact): void => {
-        if (err) {
-          res.send(err);
-        }
-        res.json(contact);
-      },
     );
+    res.status(statusCode).send(payload);
   }
 
   @Get()
-  private getAll(req: Request, res: Response): void {
-    const findAll = (err, contacts): void => {
-      if (err) {
-        res.send(err);
-      }
-      res.json(contacts);
-    };
-
-    Contact.find(findAll);
-    // .limit(10);
+  private async getAll(req: Request, res: Response) {
+    const { statusCode, payload } = await ContactService.findAll();
+    res.status(statusCode).send(payload);
   }
 
   @Post()

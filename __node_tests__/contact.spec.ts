@@ -2,8 +2,8 @@ import * as request from 'supertest';
 import { expect } from 'chai';
 
 import instance  from '../src/app';
-import IContact from '../src/types';
-import Contact from '../src/models/Contact';
+import IContact from '../src/Contact/contact-types';
+import Contact from '../src/Contact/contact-model';
 
 const app = instance.getApp();
 const baseUrl = '/api/contacts';
@@ -11,6 +11,8 @@ const newContact: IContact = {
   email: 'example@email.com',
   username: 'johndoe73',
 };
+
+// TODO: create meaningful tests
 
 describe('Contact', () => {
   beforeEach((done) => {
@@ -80,6 +82,24 @@ describe('Contact', () => {
             done();
           });
         });
+    });
+
+    it('HELP', async (done) => {
+      // const res = await Contact.insertMany([newContact]);
+      
+
+      request(app)
+        .get(`${baseUrl}`)
+        // .set('Accept', 'application/json')
+        // .expect('Content-Type', /json/)
+        .expect(200)
+        .then(response => {
+          console.log(response);
+          expect(response.body).to.exist;
+          expect(response.body.contacts).to.exist;
+          expect(response.body.contacts).to.not.equal([]);
+          done()
+        })
     });
   });
 
