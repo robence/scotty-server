@@ -6,7 +6,7 @@ import * as cors from 'cors';
 import * as dotenv from 'dotenv';
 
 import { Application } from 'express';
-import ContactController from './Contact/contact-controller';
+import ContactController from './features/Contact/contact-controller';
 
 const { MONGO_URL, PORT } = process.env;
 

@@ -6,24 +6,16 @@ import ContactService from './contact-service';
 
 @Controller('api/contacts')
 class ContactController {
-  // @Get(':id')
-  // private async get(req: Request, res: Response) {
-  //   const { contact, status, errMsg } = await ContactService.findById(req.params.id);
-  //   res.status(status).send(contact || errMsg);
-  // }
-
   @Get(':id')
-  private async get(req: Request, res: Response) {
-    const { statusCode, payload } = await ContactService.findById(
-      req.params.id,
-    );
-    res.status(statusCode).send(payload);
+  private async get(req: Request, res: Response): Promise<void> {
+    const { status, payload } = await ContactService.findById(req.params.id);
+    res.status(status).send(payload);
   }
 
   @Get()
-  private async getAll(req: Request, res: Response) {
-    const { statusCode, payload } = await ContactService.findAll();
-    res.status(statusCode).send(payload);
+  private async getAll(req: Request, res: Response): Promise<void> {
+    const { status, payload } = await ContactService.findAll();
+    res.status(status).send(payload);
   }
 
   @Post()

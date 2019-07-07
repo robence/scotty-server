@@ -2,17 +2,23 @@ import * as request from 'supertest';
 import { expect } from 'chai';
 
 import instance  from '../src/app';
-import IContact from '../src/Contact/contact-types';
-import Contact from '../src/Contact/contact-model';
+import IContact from '../src/features/Contact/contact-type';
+import Contact from '../src/features/Contact/contact-model';
 
 const app = instance.getApp();
-const baseUrl = '/api/contacts';
+
+const baseUrl = '/api'
+const contactUrl = `${baseUrl}/contacts`;
+
 const newContact: IContact = {
   email: 'example@email.com',
   username: 'johndoe73',
 };
 
-// TODO: create meaningful tests
+const newContact2: IContact = {
+  email: 'example2@email.com',
+  username: 'janedoe73',
+}
 
 describe('Contact', () => {
   beforeEach((done) => {
@@ -29,20 +35,10 @@ describe('Contact', () => {
     });
   });
 
-  it('should have answer to universe', async (done) => {
-    async function x(): Promise<number> {
-      return 42;
-    }
-
-    const returnValue = await x()
-    expect(returnValue).to.equal(42);
-    done();
-  });
-
-  describe(`POST ${baseUrl}`, () =>
+  describe(`POST ${contactUrl}`, () =>
     it('should create a contact', async (done) => {
       request(app)
-        .post(`${baseUrl}/`)
+        .post(contactUrl)
         .send(newContact)
         .expect(200)
         .end(async (err) => {
@@ -58,57 +54,29 @@ describe('Contact', () => {
     })
   );
 
-  describe(`GET ${baseUrl}`, () => {
-    it('should work on app', (done) => {
-      request(app)
-        .get(`${baseUrl}`)
-        .expect(200)
-        .end(done);
-    });
-
-    it('should retrieve all contacts', async (done) => {
-      const res = await Contact.insertMany([newContact]);
-
-      request(app)
-        .get(`${baseUrl}`)
-        .expect(200)
-        .end((err) => {
-          if (err) {
-            return done(err);
-          }
-          Contact.find({}).then((contacts) => {
-            expect(contacts).to.exist;
-            expect(1).to.equal(contacts.length);
-            done();
-          });
-        });
-    });
-
-    it('HELP', async (done) => {
-      // const res = await Contact.insertMany([newContact]);
+  describe(`GET ${contactUrl}`, () => {
+    it('Should retrieve all contacts', async (done) => {
+      await Contact.insertMany([newContact, newContact2]);
       
-
       request(app)
-        .get(`${baseUrl}`)
-        // .set('Accept', 'application/json')
-        // .expect('Content-Type', /json/)
+        .get(contactUrl)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
         .expect(200)
         .then(response => {
-          console.log(response);
-          expect(response.body).to.exist;
           expect(response.body.contacts).to.exist;
-          expect(response.body.contacts).to.not.equal([]);
+          expect(response.body.contacts.length).to.equal(2);
           done()
         })
     });
   });
 
-  describe(`GET ${baseUrl}/{id}`, () => {
+  describe(`GET ${contactUrl}/{id}`, () => {
     it('should retrieve a contact', async (done) => {
       const [res] = await Contact.insertMany([newContact]);
 
       request(app)
-        .get(`${baseUrl}/${res._id}`)
+        .get(`${contactUrl}/${res._id}`)
         .expect(200)
         .end((err) => {
           if (err) {
@@ -134,7 +102,7 @@ describe('Contact', () => {
       const { _id } = res;
 
       request(app)
-        .put(`${baseUrl}/${_id}`)
+        .put(`${contactUrl}/${_id}`)
         .send(updateContact)
         .expect(200)
         .end((err) => {
@@ -151,7 +119,7 @@ describe('Contact', () => {
     });
   });
 
-  describe(`DELETE ${baseUrl}/{id}`, () => {
+  describe(`DELETE ${contactUrl}/{id}`, () => {
     it('should delete a contact', async (done) => {
       const [res] = await Contact.insertMany([newContact]);
       const { _id } = res;
@@ -162,7 +130,7 @@ describe('Contact', () => {
       expect(contact._id).to.exist;
 
       request(app)
-        .delete(`${baseUrl}/${_id}`)
+        .delete(`${contactUrl}/${_id}`)
         .expect(200)
         .end((err: any) => {
           if (err) {
