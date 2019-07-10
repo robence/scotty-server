@@ -1,4 +1,4 @@
-import { ContactType, ContactModel } from './Schema';
+import { ContactType, ContactModel } from './Model';
 import ContactController from './Controller';
 import ContactService from './Service';
 

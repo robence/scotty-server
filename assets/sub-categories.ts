@@ -1,4 +1,4 @@
-const subCategories =  [
+const subCategories = [
   {
     mainCategory: '1',
     name: 'Meal',

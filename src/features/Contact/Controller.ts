@@ -8,6 +8,10 @@ class ContactController {
   @Get(':id')
   private async get(req: Request, res: Response): Promise<void> {
     const { status, payload } = await ContactService.findById(req.params.id);
+    // res.status(status).send(payload);
+
+    console.log('CONTROLLER');
+    console.log(payload);
     res.status(status).send(payload);
   }
 
