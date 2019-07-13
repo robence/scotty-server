@@ -1,11 +1,6 @@
-import { ErrorMessage, CustomErrorAsJSON } from './error';
+import ErrorMessage from './error';
 
-export interface ResponseType<T> {
+export default interface ResponseType<T> {
   status: number;
   payload: T | ErrorMessage;
-}
-
-export interface ResponseTypeWithCustomError {
-  status: number;
-  payload: CustomErrorAsJSON;
 }

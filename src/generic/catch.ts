@@ -5,11 +5,11 @@ export default function Catch(target, key, descriptor) {
   descriptor.value = async function(...args) {
     try {
       return await originalMethod.apply(this, args);
-    } catch (error) {
-      console.log('error');
-      console.log(error.toJSON());
-      console.log(error);
-      return { status: 401, payload: error };
+    } catch (err) {
+      return {
+        status: err.statusCode || 500,
+        payload: { error: err.message },
+      };
     }
   };
 

@@ -1,7 +1,8 @@
 import * as request from 'supertest';
+import { OK, NOT_FOUND, getStatusText } from 'http-status-codes';
 
 import instance from '../src/app';
-import { ContactType, ContactModel } from '../src/features/Contact';
+import { ContactType, ContactModel } from '../src/features/contact/Model';
 
 const app = instance.getApp();
 
@@ -9,7 +10,7 @@ const baseUrl = '/api';
 const contactUrl = `${baseUrl}/contacts`;
 
 const newContact: ContactType = {
-  email: 'example@email.com',
+  email: 'example@email.com', //
   username: 'johndoe73',
 };
 
@@ -34,21 +35,17 @@ describe('Contact', (): void => {
   });
 
   describe(`POST ${contactUrl}`, (): void => {
-    // TODO: add test case for existing username
-    // TODO: add test case for existing email
-    // TODO: add test case for missing username
-    // TODO: add test case for missing email
     it('Should create a contact', async (done): Promise<void> => {
       request(app)
         .post(contactUrl)
         .send(newContact)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
-        .expect(200)
+        .expect(OK)
         .then((response): void => {
-          expect(response.body.id).not.toBeDefined();
-          expect(response.body.username).toBe(newContact.username);
-          expect(response.body.email).toBe(newContact.email);
+          expect(response.body.contact).toBeDefined();
+          expect(response.body.contact.username).toBe(newContact.username);
+          expect(response.body.contact.email).toBe(newContact.email);
           done();
         });
     });
@@ -62,7 +59,7 @@ describe('Contact', (): void => {
         .get(contactUrl)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
-        .expect(200)
+        .expect(OK)
         .then((response): void => {
           expect(response.body.contacts).toBeTruthy();
           expect(response.body.contacts.length).toEqual(2);
@@ -72,23 +69,7 @@ describe('Contact', (): void => {
   });
 
   describe(`GET ${contactUrl}/{id}`, (): void => {
-    // it('should retrieve a contact', async (done): Promise<void> => {
-    //   const [res] = await ContactModel.insertMany([newContact]);
-
-    //   request(app)
-    //     /* eslint-disable-next-line */
-    //     .get(`${contactUrl}/${res._id}`)
-    //     .set('Accept', 'application/json')
-    //     .expect('Content-Type', /json/)
-    //     .expect(200)
-    //     .then((response): void => {
-    //       expect(response.body.contact).toBeTruthy();
-    //       expect(response.body.contact.username).toBe(newContact.username);
-    //       done();
-    //     });
-    // });
-
-    it('should throw an error', async (done): Promise<void> => {
+    it('should retrieve a contact', async (done): Promise<void> => {
       const [res] = await ContactModel.insertMany([newContact]);
 
       request(app)
@@ -96,69 +77,74 @@ describe('Contact', (): void => {
         .get(`${contactUrl}/${res._id}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
-        .expect(400)
+        .expect(OK)
         .then((response): void => {
-          // expect(response.body.errorMessage.toJSON()).toBeDefined();
-          expect(response.body.error).toBeTruthy();
-          expect(response.body.error.name).toBe('ValidationError');
-          expect(response.body.error.message).toBe('catch me if you can');
+          expect(response.body.contact).toBeTruthy();
+          expect(response.body.contact.username).toBe(newContact.username);
+          done();
+        });
+    });
 
-          // expect(response.body.errorMessage.name).toBe('ValidationError');
-          // expect(response.body.errorMessage.message).toBeTruthy();
+    it('should expect an 404', async (done): Promise<void> => {
+      const [res] = await ContactModel.insertMany([newContact]);
+      /* eslint-disable-next-line no-underscore-dangle */
+      await ContactModel.findByIdAndRemove(res._id);
+
+      request(app)
+        /* eslint-disable-next-line no-underscore-dangle */
+        .get(`${contactUrl}/${res._id}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(NOT_FOUND)
+        .then((response): void => {
+          expect(response.body.error).toBe(getStatusText(NOT_FOUND));
           done();
         });
     });
   });
 
-  // describe('PUT ${baseUrl}/{id}', (): void => {
-  //   it('should update a contact', async (done): void => {
-  //     const updateContact = {
-  //       username: 'janedoeoriginal',
-  //     };
+  describe(`PUT ${baseUrl}/{id}`, (): void => {
+    it('should update a contact', async (done): Promise<void> => {
+      const updateContact = {
+        username: 'janedoeoriginal',
+      };
 
-  //     const [res] = await ContactModel.insertMany([newContact]);
-  //     const { _id } = res;
+      const contact = new ContactModel(newContact);
+      const { _id } = await contact.save();
 
-  //     request(app)
-  //       .put(`${contactUrl}/${_id}`)
-  //       .send(updateContact)
-  //       .expect(200)
-  //       .end((err) => {
-  //         if (err) {
-  //           return done(err);
-  //         }
-  //         ContactModel.findOne({ _id }).then((contact) => {
-  //           expect(contact).to.exist;
-  //           expect(contact.email).to.equal(newContact.email);
-  //           expect(contact.username).to.equal(updateContact.username);
-  //           done();
-  //         });
-  //       });
-  //   });
-  // });
+      // const [res] = await ContactModel.save([newContact]);
+      // const { _id } = res;
 
-  // describe(`DELETE ${contactUrl}/{id}`, (): void => {
-  //   it('should delete a contact', async (done): void => {
-  //     const [res] = await ContactModel.insertMany([newContact]);
-  //     const { _id } = res;
+      request(app)
+        .put(`${contactUrl}/${_id}`)
+        .send(updateContact)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(OK)
+        .then((response): void => {
+          expect(response.body.contact).toBeTruthy();
+          expect(response.body.contact.username).toBe(updateContact.username);
+          done();
+        });
+    });
+  });
 
-  //     const contact = await ContactModel.findOne(_id);
+  describe(`DELETE ${contactUrl}/{id}`, (): void => {
+    it('should delete a contact', async (done): Promise<void> => {
+      const contact = new ContactModel(newContact);
+      const { _id } = await contact.save();
 
-  //     expect(contact).to.exist;
-  //     expect(contact._id).to.exist;
-
-  //     request(app)
-  //       .delete(`${contactUrl}/${_id}`)
-  //       .expect(200)
-  //       .end((err: any) => {
-  //         if (err) {
-  //           return done(err);
-  //         }
-  //         ContactModel.findOne(_id).then((contactt) => {
-  //           expect(contactt).to.not.exist;
-  //           done();
-  //         });
-  //       });
-  //   });
-  // });
+      request(app)
+        /* eslint-disable-next-line */
+        .delete(`${contactUrl}/${_id}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(OK)
+        .then((response): void => {
+          expect(response.body.contact).toBeTruthy();
+          expect(response.body.contact.username).toBe(newContact.username);
+          done();
+        });
+    });
+  });
 });

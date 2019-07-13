@@ -1,7 +1,6 @@
 /* eslint-disable */
-import { CustomErrorType } from '../types/error';
-
-export default class ValidationError extends Error implements CustomErrorType {
+export default class NamedError extends Error {
+  status: number;
   constructor(message) {
     super(message);
     this.name = 'ValidationError';
@@ -13,7 +12,7 @@ export default class ValidationError extends Error implements CustomErrorType {
       error: {
         name: this.name,
         message: this.message,
-        // stacktrace: this.stack,
+        status: this.status,
       },
     };
   }

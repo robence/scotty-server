@@ -2,11 +2,13 @@ import * as bodyParser from 'body-parser';
 import { Server } from '@overnightjs/core';
 import * as mongoose from 'mongoose';
 import * as cors from 'cors';
-// eslint-disable-next-line
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 import * as dotenv from 'dotenv';
 
 import { Application } from 'express';
-import ContactController from './features/Contact/Controller';
+import clientErrorHandler from './middleware/client-error-handler';
+// import loggerMiddleware from './middleware/logger';
+import ContactController from './features/contact/Controller';
 
 const { MONGO_URL, PORT } = process.env;
 
@@ -14,9 +16,9 @@ class App extends Server {
   public constructor() {
     super();
 
-    this.config();
+    this.setupMiddlewares();
     this.setupRoutes();
-    this.mongoSetup();
+    this.setupDatabase();
   }
 
   public start(): void {
@@ -30,40 +32,42 @@ class App extends Server {
     return this.app;
   }
 
+  // after tests manual disconnect is called since mongoose is handled inside app
   public async disconnect(): Promise<void> {
     await mongoose.disconnect();
     // eslint-disable-next-line no-console
     return console.log('[SUCCESS] - Disconnected from MongoDB.');
   }
 
-  private config(): void {
+  private setupMiddlewares(): void {
     this.app
       .use(cors())
       .use(bodyParser.json())
       .use(bodyParser.urlencoded({ extended: true }))
-      .use(
-        // eslint-disable-next-line
-        (err, req, res, next): void => {
-          // eslint-disable-next-line no-console
-          console.error(err.stack);
-          res.status(500).send('Something broke!');
-        },
-      );
+      // .use(loggerMiddleware)
+      .use(clientErrorHandler);
+    // .use(
+    //   // eslint-disable-next-line
+    //   (err, req, res, next): void => {
+    //     // eslint-disable-next-line no-console
+    //     console.error(err.stack);
+    //     res.status(500).send('Something broke!');
+    //   },
   }
 
   private setupRoutes(): void {
     super.addControllers([ContactController]);
   }
 
-  private mongoSetup(): void {
+  private setupDatabase(): void {
     const options = { useNewUrlParser: true };
     mongoose.set('useCreateIndex', true);
 
     mongoose.connect(MONGO_URL, options).then(
-      // eslint-disable-next-line no-console
+      /* eslint-disable no-console */
       (): void => console.log('[SUCCESS] - Connected to MongoDB.'),
-      // eslint-disable-next-line no-console
       (): void => console.log('[ERROR] - Cannot connect to MongoDB!'),
+      /* eslint-enable no-console */
     );
   }
 }
