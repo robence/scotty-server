@@ -1,3 +1,8 @@
+/**
+ * [DEPRECATED]
+ * Example of writing custom Error type
+ */
+
 /* eslint-disable */
 export default class NamedError extends Error {
   status: number;

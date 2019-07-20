@@ -1,3 +1,8 @@
+/**
+ * [DEPRECATED]
+ * Example of writing custom-tailored decorators
+ */
+
 /* eslint-disable */
 export default function Catch(target, key, descriptor) {
   const originalMethod = descriptor.value;

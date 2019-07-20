@@ -3,8 +3,6 @@ import { OK } from 'http-status-codes';
 import { UserType, UserModel } from './Model';
 import ResponseType from '../../types/response';
 
-// TODO: move error handling to middleware
-import Catch from '../../generic/catch';
 import { HTTP400Error, HTTP404Error } from '../../error/http-400.error';
 
 type SingleUser = { user: UserType };
@@ -18,13 +16,11 @@ class UserService {
     return { status: OK, payload: { user } };
   }
 
-  @Catch
   async retrieveUsers(): Promise<ResponseType<MultipleUsers>> {
     const users = await UserModel.find({});
     return { status: OK, payload: { users } };
   }
 
-  @Catch
   async retrieveUser(id: number): Promise<ResponseType<SingleUser>> {
     const user = await UserModel.findById(id);
     if (!user) throw new HTTP404Error();
@@ -38,7 +34,7 @@ class UserService {
     const body = await UserModel.findById(id);
     if (!body) throw new HTTP404Error('user not found');
 
-    // TODO: find better solution
+    // TODO: find better solution to update mongo document
     body.username = username;
     body.email = email;
 
@@ -51,7 +47,6 @@ class UserService {
     return { status: OK, payload: { user } };
   }
 
-  @Catch
   async deleteUser(id: number): Promise<ResponseType<SingleUser>> {
     const user = await UserModel.findByIdAndRemove(id);
     if (!user) throw new HTTP404Error();
