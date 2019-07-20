@@ -27,6 +27,8 @@
     "semi": "off",
     "@typescript-eslint/semi": ["error"],
     "indent": "off",
+    "no-underscore-dangle": "off",
+    "no-console": "off",
     "@typescript-eslint/indent": ["error", 2],
     "@typescript-eslint/interface-name-prefix": ["error", "never"],
     "@typescript-eslint/prefer-interface": "off",

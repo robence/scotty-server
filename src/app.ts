@@ -4,11 +4,15 @@ import * as mongoose from 'mongoose';
 import * as cors from 'cors';
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 import * as dotenv from 'dotenv';
-
 import { Application } from 'express';
-import clientErrorHandler from './middleware/client-error-handler';
-// import loggerMiddleware from './middleware/logger';
-import ContactController from './features/contact/Controller';
+import log from './utils/log';
+
+import {
+  loggerMiddleware,
+  clientErrorHandler,
+  errorHandler,
+} from './middleware';
+import controllers from './features';
 
 const { MONGO_URL, PORT } = process.env;
 
@@ -19,12 +23,12 @@ class App extends Server {
     this.setupMiddlewares();
     this.setupRoutes();
     this.setupDatabase();
+    this.setupErrorHandlers();
   }
 
   public start(): void {
     this.app.listen(PORT || 5000, (): void => {
-      // eslint-disable-next-line no-console
-      console.log('[SUCCESS] - Express server listening on port', PORT || 5000);
+      log.success(`Express server listening on port ${PORT || 5000}`);
     });
   }
 
@@ -32,11 +36,9 @@ class App extends Server {
     return this.app;
   }
 
-  // after tests manual disconnect is called since mongoose is handled inside app
   public async disconnect(): Promise<void> {
     await mongoose.disconnect();
-    // eslint-disable-next-line no-console
-    return console.log('[SUCCESS] - Disconnected from MongoDB.');
+    log.success('Disconnected from MongoDB.');
   }
 
   private setupMiddlewares(): void {
@@ -44,31 +46,28 @@ class App extends Server {
       .use(cors())
       .use(bodyParser.json())
       .use(bodyParser.urlencoded({ extended: true }))
-      // .use(loggerMiddleware)
-      .use(clientErrorHandler);
-    // .use(
-    //   // eslint-disable-next-line
-    //   (err, req, res, next): void => {
-    //     // eslint-disable-next-line no-console
-    //     console.error(err.stack);
-    //     res.status(500).send('Something broke!');
-    //   },
+      .use(loggerMiddleware);
   }
 
   private setupRoutes(): void {
-    super.addControllers([ContactController]);
+    super.addControllers(controllers);
   }
 
-  private setupDatabase(): void {
-    const options = { useNewUrlParser: true };
-    mongoose.set('useCreateIndex', true);
+  private setupErrorHandlers(): void {
+    this.app.use(clientErrorHandler).use(errorHandler);
+  }
 
-    mongoose.connect(MONGO_URL, options).then(
-      /* eslint-disable no-console */
-      (): void => console.log('[SUCCESS] - Connected to MongoDB.'),
-      (): void => console.log('[ERROR] - Cannot connect to MongoDB!'),
-      /* eslint-enable no-console */
-    );
+  private async setupDatabase(): Promise<void> {
+    mongoose.set('useNewUrlParser', true);
+    mongoose.set('useCreateIndex', true);
+    mongoose.set('useFindAndModify', false);
+
+    mongoose
+      .connect(MONGO_URL)
+      .then(
+        (): void => console.log('[SUCCESS] - Connected to MongoDB.'),
+        (): void => console.log('[ERROR] - Cannot connect to MongoDB!'),
+      );
   }
 }
 const instance = new App();

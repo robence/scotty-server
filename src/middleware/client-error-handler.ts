@@ -1,11 +1,25 @@
+import { Request, Response, NextFunction } from 'express';
+import { BAD_REQUEST } from 'http-status-codes';
 import HttpClientError from '../error/http-client-error';
+import log from '../utils/log';
 
-const clientErrorHandler = (err, req, res, next): void => {
-  if (err instanceof HttpClientError) {
-    res.status(err.statusCode).send(err.message);
+export default function clientErrorHandler(
+  error: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  log.info('CLIENT ERROR HANDLER');
+
+  if (error instanceof HttpClientError) {
+    res.status(error.statusCode).send({ error });
+  } else if (error.name === 'ValidationError') {
+    // handle mongoose validation failure
+    log.err('MONGO VALIDATION FAILED');
+    res.status(BAD_REQUEST).send({ error });
   } else {
-    next(err);
+    log.err('UNHANDLER ERROR');
+    console.log(error);
+    next(error);
   }
-};
-
-export default clientErrorHandler;
+}

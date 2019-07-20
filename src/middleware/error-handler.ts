@@ -1,7 +1,14 @@
-const errorHandler = (err, req, res, next): void => {
-  // eslint-disable-next-line no-console
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-};
+import { Request, Response } from 'express';
 
-export default errorHandler;
+export default function errorHandler(
+  err: Error,
+  req: Request,
+  res: Response,
+): void {
+  console.log('ULTIMATE ERROR HANDLER');
+  console.log(err.name);
+  console.log(err.message);
+
+  res.status(500);
+  res.json({ error: err });
+}
