@@ -13,6 +13,7 @@ import UserService from './Service';
 import wrapAsync from '../../utils/async';
 
 @Controller(`${BASE}${USER}`)
+// TODO: compare with express-async-handler
 @ClassWrapper(wrapAsync)
 class UserController {
   @Post()

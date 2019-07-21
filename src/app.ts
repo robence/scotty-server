@@ -28,7 +28,7 @@ class App extends Server {
 
   public start(): void {
     this.app.listen(PORT || 5000, (): void => {
-      log.success(`Express server listening on port ${PORT || 5000}`);
+      log.success(`Express server listening on port ${PORT || 5000}.`);
     });
   }
 
@@ -65,8 +65,8 @@ class App extends Server {
     mongoose
       .connect(MONGO_URL)
       .then(
-        (): void => console.log('[SUCCESS] - Connected to MongoDB.'),
-        (): void => console.log('[ERROR] - Cannot connect to MongoDB!'),
+        (): void => log.success('Connected to MongoDB.'),
+        (): void => log.err('Cannot connect to MongoDB!'),
       );
   }
 }

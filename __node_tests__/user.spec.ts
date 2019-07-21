@@ -1,3 +1,6 @@
+// TODO: Add ValidationError (mongo) expetion test cases
+// TODO: Add HTTPClientError test cases
+
 import * as request from 'supertest';
 import { Application } from 'express';
 import { OK, NOT_FOUND } from 'http-status-codes';
@@ -21,6 +24,8 @@ const newUser2: UserType = {
   username: 'janedoe73',
 };
 
+const newUsers = [newUser, newUser2];
+
 describe('User', (): void => {
   beforeEach((done): void => {
     UserModel.deleteMany({}).then((): void => done());
@@ -29,15 +34,15 @@ describe('User', (): void => {
   beforeAll(
     async (done): Promise<void> => {
       app = await instance.getApp();
-      log.success('APPLICATION STARTED');
-      log.info('RUNNING TESTS NOW');
+      log.success('Application Started.');
+      log.info('Running tests now.');
       done();
     },
   );
 
   afterAll(
     async (done): Promise<void> => {
-      log.info('FINISHED TESTS');
+      log.info('Finished tests.');
 
       await instance.disconnect();
       done();
@@ -48,15 +53,15 @@ describe('User', (): void => {
     it('Should create a user', async (done): Promise<void> => {
       request(app)
         .post(userURL)
-        // .send({ ...newUser, email: '123' })
         .send(newUser)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
         .expect(OK)
         .then((response): void => {
           expect(response.body.user).toBeDefined();
-          expect(response.body.user.username).toBe(newUser.username);
-          expect(response.body.user.email).toBe(newUser.email);
+          const { username, email } = response.body.user;
+          const actual: UserType = { username, email };
+          expect(actual).toEqual(newUser);
           done();
         });
     });
@@ -64,7 +69,7 @@ describe('User', (): void => {
 
   describe(`GET ${userURL}`, (): void => {
     it('Should retrieve all users', async (done): Promise<void> => {
-      await UserModel.insertMany([newUser, newUser2]);
+      await UserModel.insertMany(newUsers);
 
       request(app)
         .get(userURL)
@@ -72,8 +77,8 @@ describe('User', (): void => {
         .expect('Content-Type', /json/)
         .expect(OK)
         .then((response): void => {
-          expect(response.body.users).toBeTruthy();
-          expect(response.body.users.length).toEqual(2);
+          expect(response.body.users).toBeDefined();
+          expect(response.body.users.length).toBe(newUsers.length);
           done();
         });
     });
@@ -89,20 +94,14 @@ describe('User', (): void => {
         .expect('Content-Type', /json/)
         .expect(OK)
         .then((response): void => {
-          expect(response.body.user).toBeTruthy();
-          /* eslint-disable-next-line no-underscore-dangle */
-          expect(response.body.user.username).toBe(newUser.username);
-          expect(response.body.user.email).toBe(newUser.email);
-
-          // TODO: find out why this does not work
-          // TODO: Also find an easy way to compare expected and actual
-          // const castedUser: UserType = response.body.user as UserType;
-          // expect(castedUser).toEqual(newUser);
+          expect(response.body.user).toBeDefined();
+          const { username, email } = response.body.user;
+          const actual: UserType = { username, email };
+          expect(actual).toEqual(newUser);
           done();
         });
     });
 
-    // eslint-disable-next-line
     it('should expect an 404', async (done): Promise<void> => {
       const [res] = await UserModel.insertMany([newUser]);
       await UserModel.findByIdAndRemove(res._id);
@@ -134,9 +133,10 @@ describe('User', (): void => {
         .expect('Content-Type', /json/)
         .expect(OK)
         .then((response): void => {
-          // expect(response.body.user._id).toBe(_id);
-          expect(response.body.user.email).toBe(newUser2.email);
-          expect(response.body.user.username).toBe(newUser2.username);
+          expect(response.body.user).toBeDefined();
+          const { username, email } = response.body.user;
+          const actual: UserType = { username, email };
+          expect(actual).toEqual(newUser2);
           done();
         });
     });
@@ -176,8 +176,10 @@ describe('User', (): void => {
         .expect('Content-Type', /json/)
         .expect(OK)
         .then((response): void => {
-          expect(response.body.user).toBeTruthy();
-          expect(response.body.user.username).toBe(newUser.username);
+          expect(response.body.user).toBeDefined();
+          const { username, email } = response.body.user;
+          const actual: UserType = { username, email };
+          expect(actual).toEqual(newUser);
           done();
         });
     });
