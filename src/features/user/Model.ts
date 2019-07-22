@@ -6,6 +6,8 @@ export type UserType = {
   email: string;
 };
 
+export type UserModelType = Document & UserType;
+
 const UserSchema = new Schema(
   {
     username: {
@@ -32,7 +34,7 @@ const UserSchema = new Schema(
 UserSchema.plugin(uniqueValidator);
 
 // prettier-ignore
-export const UserModel: Model<Document & UserType> = model<Document & UserType>(
+export const UserModel: Model<UserModelType> = model<UserModelType>(
   'User',
   UserSchema
 );

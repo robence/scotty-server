@@ -5,10 +5,13 @@ import * as request from 'supertest';
 import { Application } from 'express';
 import { Logger } from '@overnightjs/logger';
 import { OK, NOT_FOUND } from 'http-status-codes';
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+import * as dotenv from 'dotenv';
 
-import instance from '../src/app';
 import { UserType, UserModel } from '../src/features/user/Model';
 import { BASE, ID, USER } from '../src/url';
+import App from '../src/app';
+import { disconnect, start } from '../src/database';
 
 let app: Application;
 
@@ -33,18 +36,25 @@ describe('User', (): void => {
 
   beforeAll(
     async (done): Promise<void> => {
-      app = await instance.getApp();
-      Logger.Imp('Application Started.');
-      Logger.Imp('Running tests now.');
-      done();
+      try {
+        await start(process.env.MONGO_URL);
+        Logger.Imp('Connected to MongoDB.');
+
+        app = new App().getApp();
+
+        Logger.Imp('Application Started.');
+        Logger.Imp('Running tests now.');
+        done();
+      } catch (e) {
+        Logger.Err('Cannot connect to MongoDB.');
+      }
     },
   );
 
   afterAll(
     async (done): Promise<void> => {
       Logger.Imp('Finished tests.');
-
-      await instance.disconnect();
+      await disconnect();
       done();
     },
   );
@@ -115,9 +125,6 @@ describe('User', (): void => {
           expect(response.body.error).toBeDefined();
           expect(response.body.error.name).toBe('HTTP404Error');
           expect(response.body.error.statusCode).toBe(NOT_FOUND);
-          // TODO: Important!!
-          // FIXME: add message to error body
-          // expect(response.body.error.message).toBe(getStatusText(NOT_FOUND));
           done();
         });
     });

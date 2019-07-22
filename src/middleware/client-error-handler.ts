@@ -10,11 +10,12 @@ export default function clientErrorHandler(
   next: NextFunction,
 ): void {
   if (error instanceof HttpClientError) {
-    Logger.Warn(`Caught ${error.name}.`);
+    // handle service checked exceptions
+    Logger.Warn(`${req.path}  Caught ${error.name}.`);
     res.status(error.statusCode).send({ error });
   } else if (error.name === 'ValidationError') {
     // handle mongoose validation failure
-    Logger.Warn(`Caught ${error.name}.`);
+    Logger.Warn(`${req.path}  Caught ${error.name}.`);
     res.status(BAD_REQUEST).send({ error });
   } else {
     next(error);
