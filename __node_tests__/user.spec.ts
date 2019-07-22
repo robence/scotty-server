@@ -1,14 +1,14 @@
-// TODO: Add ValidationError (mongo) expetion test cases
+// TODO: Add ValidationError (mongo) exception test cases
 // TODO: Add HTTPClientError test cases
 
 import * as request from 'supertest';
 import { Application } from 'express';
+import { Logger } from '@overnightjs/logger';
 import { OK, NOT_FOUND } from 'http-status-codes';
 
 import instance from '../src/app';
 import { UserType, UserModel } from '../src/features/user/Model';
 import { BASE, ID, USER } from '../src/url';
-import log from '../src/utils/log';
 
 let app: Application;
 
@@ -34,15 +34,15 @@ describe('User', (): void => {
   beforeAll(
     async (done): Promise<void> => {
       app = await instance.getApp();
-      log.success('Application Started.');
-      log.info('Running tests now.');
+      Logger.Imp('Application Started.');
+      Logger.Imp('Running tests now.');
       done();
     },
   );
 
   afterAll(
     async (done): Promise<void> => {
-      log.info('Finished tests.');
+      Logger.Imp('Finished tests.');
 
       await instance.disconnect();
       done();
@@ -113,6 +113,8 @@ describe('User', (): void => {
         .expect(NOT_FOUND)
         .then((response): void => {
           expect(response.body.error).toBeDefined();
+          expect(response.body.error.name).toBe('HTTP404Error');
+          expect(response.body.error.statusCode).toBe(NOT_FOUND);
           // TODO: Important!!
           // FIXME: add message to error body
           // expect(response.body.error.message).toBe(getStatusText(NOT_FOUND));

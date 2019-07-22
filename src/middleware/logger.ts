@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 
-import log from '../utils/log';
+import { Logger } from '@overnightjs/logger';
 
 const logger = (req: Request, _: Response, next: NextFunction): void => {
-  log.info(`${req.url}  ${req.method}`);
+  Logger.Info(`${req.url}  ${req.method}`);
   next();
 };
 

@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@overnightjs/core": "^1.4.1",
+    "@overnightjs/logger": "^1.1.9",
     "@types/mongoose": "^5.5.5",
     "@types/mongoose-unique-validator": "^1.0.1",
     "@types/supertest": "^2.0.8",

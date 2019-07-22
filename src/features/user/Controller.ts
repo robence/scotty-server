@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import * as expressAsyncHandler from 'express-async-handler';
 import {
   ClassWrapper,
   Controller,
@@ -7,14 +8,11 @@ import {
   Put,
   Delete,
 } from '@overnightjs/core';
-// import * as expressAsyncHandler from 'express-async-handler';
 import { BASE, ID, USER } from '../../url';
 import UserService from './Service';
-import wrapAsync from '../../utils/async';
 
 @Controller(`${BASE}${USER}`)
-// TODO: compare with express-async-handler
-@ClassWrapper(wrapAsync)
+@ClassWrapper(expressAsyncHandler)
 class UserController {
   @Post()
   private async create(req: Request, res: Response): Promise<void> {

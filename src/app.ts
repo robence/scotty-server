@@ -5,7 +5,7 @@ import * as cors from 'cors';
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 import * as dotenv from 'dotenv';
 import { Application } from 'express';
-import log from './utils/log';
+import { Logger } from '@overnightjs/logger';
 
 import {
   loggerMiddleware,
@@ -28,7 +28,7 @@ class App extends Server {
 
   public start(): void {
     this.app.listen(PORT || 5000, (): void => {
-      log.success(`Express server listening on port ${PORT || 5000}.`);
+      Logger.Imp(`Express server listening on port ${PORT || 5000}.`);
     });
   }
 
@@ -38,7 +38,7 @@ class App extends Server {
 
   public async disconnect(): Promise<void> {
     await mongoose.disconnect();
-    log.success('Disconnected from MongoDB.');
+    Logger.Imp('Disconnected from MongoDB.');
   }
 
   private setupMiddlewares(): void {
@@ -65,8 +65,8 @@ class App extends Server {
     mongoose
       .connect(MONGO_URL)
       .then(
-        (): void => log.success('Connected to MongoDB.'),
-        (): void => log.err('Cannot connect to MongoDB!'),
+        (): void => Logger.Imp('Connected to MongoDB.'),
+        (): void => Logger.Err('Cannot connect to MongoDB!'),
       );
   }
 }

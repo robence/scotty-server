@@ -1,14 +1,16 @@
 import { Request, Response } from 'express';
+import { Logger } from '@overnightjs/logger';
 
 export default function errorHandler(
-  err: Error,
+  error: Error,
   req: Request,
   res: Response,
 ): void {
-  console.log('ULTIMATE ERROR HANDLER');
-  console.log(err.name);
-  console.log(err.message);
+  Logger.Err('Unexpected error.');
+  Logger.Err(error.name);
+  Logger.Err(error.message);
 
-  res.status(500);
-  res.json({ error: err });
+  // TODO: print stacktrace if not production
+  // TODO: return with or without stacktrace according to env
+  res.status(500).json({ error });
 }

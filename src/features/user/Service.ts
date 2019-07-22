@@ -38,12 +38,8 @@ class UserService {
     body.username = username;
     body.email = email;
 
-    // body = { ...body, email };
-
     const user = await body.save();
-
     if (!user) throw new HTTP400Error('could not save user');
-
     return { status: OK, payload: { user } };
   }
 
