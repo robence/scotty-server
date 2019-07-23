@@ -10,7 +10,5 @@ export default function errorHandler(
   Logger.Err(error.name);
   Logger.Err(error.message);
 
-  // TODO: print stacktrace if not production
-  // TODO: return with or without stacktrace according to env
   res.status(500).json({ error });
 }

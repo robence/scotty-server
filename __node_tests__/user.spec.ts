@@ -1,10 +1,7 @@
-// TODO: Add ValidationError (mongo) exception test cases
-// TODO: Add HTTPClientError test cases
-
 import * as request from 'supertest';
 import { Application } from 'express';
 import { Logger } from '@overnightjs/logger';
-import { OK, NOT_FOUND } from 'http-status-codes';
+import { OK, NOT_FOUND, BAD_REQUEST } from 'http-status-codes';
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 import * as dotenv from 'dotenv';
 
@@ -12,6 +9,7 @@ import { UserType, UserModel } from '../src/features/user/Model';
 import { BASE, ID, USER } from '../src/url';
 import App from '../src/app';
 import { disconnect, start } from '../src/database';
+import { format } from '../src/utils/model';
 
 let app: Application;
 
@@ -39,9 +37,7 @@ describe('User', (): void => {
       try {
         await start(process.env.MONGO_URL);
         Logger.Imp('Connected to MongoDB.');
-
         app = new App().getApp();
-
         Logger.Imp('Application Started.');
         Logger.Imp('Running tests now.');
         done();
@@ -67,13 +63,37 @@ describe('User', (): void => {
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
         .expect(OK)
-        .then((response): void => {
-          expect(response.body.user).toBeDefined();
-          const { username, email } = response.body.user;
+        .then(({ body }): void => {
+          expect(body).toHaveProperty('user');
+          const { username, email } = body.user;
           const actual: UserType = { username, email };
           expect(actual).toEqual(newUser);
           done();
         });
+    });
+
+    it('Should catch validation error', async (done): Promise<void> => {
+      await UserModel.insertMany([newUser]);
+
+      request(app)
+        .post(userURL)
+        .send(newUser)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(BAD_REQUEST)
+        .then(
+          async ({ body }): Promise<void> => {
+            expect(body).toHaveProperty('error.message');
+            expect(body).toHaveProperty('error.name');
+            expect(body).toHaveProperty('error.errors.email');
+            expect(body).toHaveProperty('error.errors.username');
+
+            // validate database integrity
+            const users = await UserModel.find({});
+            expect(users).toHaveLength(1);
+            done();
+          },
+        );
     });
   });
 
@@ -86,11 +106,19 @@ describe('User', (): void => {
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
         .expect(OK)
-        .then((response): void => {
-          expect(response.body.users).toBeDefined();
-          expect(response.body.users.length).toBe(newUsers.length);
-          done();
-        });
+        .then(
+          async ({ body }): Promise<void> => {
+            // check response
+            expect(body).toHaveProperty('users');
+            expect(body.users).toHaveLength(newUsers.length);
+
+            // check database
+            const users = await UserModel.find({});
+            expect(users).toHaveLength(newUsers.length);
+
+            done();
+          },
+        );
     });
   });
 
@@ -103,13 +131,16 @@ describe('User', (): void => {
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
         .expect(OK)
-        .then((response): void => {
-          expect(response.body.user).toBeDefined();
-          const { username, email } = response.body.user;
-          const actual: UserType = { username, email };
-          expect(actual).toEqual(newUser);
-          done();
-        });
+        .then(
+          async ({ body }): Promise<void> => {
+            expect(body).toHaveProperty('user');
+            const user = await UserModel.findById(res._id);
+
+            const { actual, expected } = format(user, body.user);
+            expect(expected).toEqual(actual);
+            done();
+          },
+        );
     });
 
     it('should expect an 404', async (done): Promise<void> => {
@@ -121,10 +152,10 @@ describe('User', (): void => {
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
         .expect(NOT_FOUND)
-        .then((response): void => {
-          expect(response.body.error).toBeDefined();
-          expect(response.body.error.name).toBe('HTTP404Error');
-          expect(response.body.error.statusCode).toBe(NOT_FOUND);
+        .then(({ body }): void => {
+          expect(body).toHaveProperty('error');
+          expect(body.error.name).toBe('HTTPNotFound');
+          expect(body.error.statusCode).toBe(NOT_FOUND);
           done();
         });
     });
@@ -141,13 +172,20 @@ describe('User', (): void => {
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
         .expect(OK)
-        .then((response): void => {
-          expect(response.body.user).toBeDefined();
-          const { username, email } = response.body.user;
-          const actual: UserType = { username, email };
-          expect(actual).toEqual(newUser2);
-          done();
-        });
+        .then(
+          async ({ body }): Promise<void> => {
+            expect(body).toHaveProperty('user');
+            const updatedUser = await UserModel.findById(_id);
+
+            const {
+              actual: { updatedAt: actualUpdated, ...actual },
+              expected: { updatedAt: expectedUpdated, ...expected },
+            } = format(updatedUser, body.user);
+            expect(expected).toEqual(actual);
+            expect(expectedUpdated).not.toEqual(actualUpdated);
+            done();
+          },
+        );
     });
 
     it(`Should expect ${NOT_FOUND}`, async (done): Promise<void> => {
@@ -164,11 +202,10 @@ describe('User', (): void => {
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
         .expect(NOT_FOUND)
-        .then((response): void => {
-          expect(response.body.error).toBeDefined();
-          expect(response.body.error.name).toBe('HTTP404Error');
-          expect(response.body.error.statusCode).toBe(NOT_FOUND);
-          // expect(response.body.error.message).toBe('user not found');
+        .then(({ body }): void => {
+          expect(body).toHaveProperty('error');
+          expect(body.error.name).toBe('HTTPNotFound');
+          expect(body.error.statusCode).toBe(NOT_FOUND);
           done();
         });
     });
@@ -184,13 +221,14 @@ describe('User', (): void => {
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
         .expect(OK)
-        .then((response): void => {
-          expect(response.body.user).toBeDefined();
-          const { username, email } = response.body.user;
-          const actual: UserType = { username, email };
-          expect(actual).toEqual(newUser);
-          done();
-        });
+        .then(
+          async ({ body }): Promise<void> => {
+            expect(body).toBe(_id.toString());
+            const deletedUser = await UserModel.findById(body);
+            expect(deletedUser).toBe(null);
+            done();
+          },
+        );
     });
   });
 });

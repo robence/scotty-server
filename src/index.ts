@@ -21,5 +21,3 @@ start(MONGO_URL).then(
   },
   (): void => Logger.Err('Cannot connect to MongoDB!'),
 );
-
-// TODO: add graceful shutdown with database disconnect
