@@ -188,7 +188,8 @@ describe('User', (): void => {
   describe(`PUT ${userURL}${ID}`, (): void => {
     it('Should update a user', async (done): Promise<void> => {
       const user = new UserModel(newUser);
-      const { _id } = await user.save();
+      // @ts-ignore
+      const { _id, updatedAt: previousUpdated } = await user.save();
 
       request(app)
         .put(`${userURL}/${_id}`)
@@ -205,8 +206,10 @@ describe('User', (): void => {
               actual: { updatedAt: actualUpdated, ...actual },
               expected: { updatedAt: expectedUpdated, ...expected },
             } = format(updatedUser, body.user);
+
             expect(expected).toEqual(actual);
-            expect(expectedUpdated).not.toEqual(actualUpdated);
+            expect(actualUpdated).toEqual(expectedUpdated);
+            expect(actualUpdated).not.toEqual(previousUpdated);
             done();
           },
         );
@@ -258,7 +261,9 @@ describe('User', (): void => {
         );
     });
 
-    it(`Should expect ${getStatusText(NOT_FOUND)}`, async (done): Promise<void> => {
+    it(`Should expect ${getStatusText(NOT_FOUND)}`, async (done): Promise<
+    void
+    > => {
       // create user to have a valid id
       const user = new UserModel(newUser);
       const { _id } = await user.save();

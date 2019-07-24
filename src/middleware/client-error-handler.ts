@@ -7,14 +7,16 @@ export default function clientErrorHandler(
   error: Error,
   req: Request,
   res: Response,
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   next: NextFunction,
 ): void {
+  // handle service checked exceptions
   if (error instanceof HttpClientError) {
-    // handle service checked exceptions
     Logger.Warn(`${req.path}  Caught ${error.name}.`);
     res.status(error.statusCode).send({ error });
-  } else if (error.name === 'ValidationError') {
-    // handle mongoose validation failure
+  }
+  // handle mongoose validation failure
+  else if (error.name === 'ValidationError') {
     Logger.Warn(`${req.path}  Caught ${error.name}.`);
     res.status(BAD_REQUEST).send({ error });
   } else {

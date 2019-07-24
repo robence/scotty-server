@@ -7,7 +7,6 @@ import { Logger } from '@overnightjs/logger';
 import {
   loggerMiddleware,
   clientErrorHandler,
-  errorHandler,
 } from './middleware';
 import controllers from './features';
 
@@ -17,7 +16,7 @@ export default class App extends Server {
 
     this.setupMiddlewares();
     this.setupRoutes();
-    this.setupErrorHandlers();
+    this.setupErrorHandler();
   }
 
   public start(port): void {
@@ -42,7 +41,7 @@ export default class App extends Server {
     super.addControllers(controllers);
   }
 
-  private setupErrorHandlers(): void {
-    this.app.use(clientErrorHandler).use(errorHandler);
+  private setupErrorHandler(): void {
+    this.app.use(clientErrorHandler);
   }
 }

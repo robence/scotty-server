@@ -1,6 +1,6 @@
 import { OK } from 'http-status-codes';
 
-import UserModel, { UserType } from './Model';
+import UserModel, { UserType, UserModelType } from './Model';
 import ResponseType from '../../types/response';
 import { HTTPBadRequest, HTTPNotFound } from '../../error/http-400.error';
 import { update } from '../../utils/model';
@@ -23,7 +23,6 @@ class UserService {
 
   async retrieveUser(id: number): Promise<ResponseType<SingleUser>> {
     const user = await UserModel.findById(id);
-    // throw new Error('hello there');
     if (!user) throw new HTTPNotFound('user not found');
     return { status: OK, payload: { user } };
   }
@@ -34,7 +33,7 @@ class UserService {
   ): Promise<ResponseType<SingleUser>> {
     const body = await UserModel.findById(id);
     if (!body) throw new HTTPNotFound('user not found');
-    update(body, updateObject);
+    update<UserModelType, Partial<UserType>>(body, updateObject);
     const user = await body.save();
     if (!user) throw new HTTPBadRequest('could not save user');
     return { status: OK, payload: { user } };
