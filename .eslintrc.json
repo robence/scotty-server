@@ -3,13 +3,16 @@
     "./__node_tests__/.eslintrc.json",
     "airbnb-base",
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
+    "prettier",
+    "prettier/@typescript-eslint",
     "plugin:jest/recommended"
   ],
   "env": {
     "es6": true
   },
   "parser": "@typescript-eslint/parser",
+  "plugins": ["prettier"],
+
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module",
@@ -34,7 +37,6 @@
     "@typescript-eslint/prefer-interface": "off",
     "@typescript-eslint/explicit-member-accessibility": "off"
   },
-  "plugins": ["prettier", "@typescript-eslint"],
   "settings": {
     "import/resolver": {
       "node": {

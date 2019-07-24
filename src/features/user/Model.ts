@@ -33,8 +33,9 @@ const UserSchema = new Schema(
 
 UserSchema.plugin(uniqueValidator);
 
-// prettier-ignore
-export const UserModel: Model<UserModelType> = model<UserModelType>(
+const UserModel: Model<UserModelType> = model<UserModelType>(
   'User',
-  UserSchema
+  UserSchema,
 );
+
+export default UserModel;

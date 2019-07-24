@@ -1,6 +1,6 @@
 import { OK } from 'http-status-codes';
 
-import { UserType, UserModel } from './Model';
+import UserModel, { UserType } from './Model';
 import ResponseType from '../../types/response';
 import { HTTPBadRequest, HTTPNotFound } from '../../error/http-400.error';
 import { update } from '../../utils/model';
@@ -23,6 +23,7 @@ class UserService {
 
   async retrieveUser(id: number): Promise<ResponseType<SingleUser>> {
     const user = await UserModel.findById(id);
+    // throw new Error('hello there');
     if (!user) throw new HTTPNotFound('user not found');
     return { status: OK, payload: { user } };
   }

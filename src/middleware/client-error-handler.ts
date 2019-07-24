@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { BAD_REQUEST } from 'http-status-codes';
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from 'http-status-codes';
 import { Logger } from '@overnightjs/logger';
 import HttpClientError from '../error/http-client-error';
 
@@ -18,6 +18,13 @@ export default function clientErrorHandler(
     Logger.Warn(`${req.path}  Caught ${error.name}.`);
     res.status(BAD_REQUEST).send({ error });
   } else {
-    next(error);
+    Logger.Err('Unexpected error.');
+    Logger.Err(error.name);
+    Logger.Err(error.stack);
+    Logger.Err(error.message);
+
+    res
+      .status(INTERNAL_SERVER_ERROR)
+      .json({ error: { name: error.name, message: error.message } });
   }
 }

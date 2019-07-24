@@ -1,11 +1,11 @@
 import * as request from 'supertest';
 import { Application } from 'express';
 import { Logger } from '@overnightjs/logger';
-import { OK, NOT_FOUND, BAD_REQUEST } from 'http-status-codes';
+import { OK, NOT_FOUND, BAD_REQUEST, getStatusText } from 'http-status-codes';
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 import * as dotenv from 'dotenv';
 
-import { UserType, UserModel } from '../src/features/user/Model';
+import UserModel, { UserType } from '../src/features/user/Model';
 import { BASE, ID, USER } from '../src/url';
 import App from '../src/app';
 import { disconnect, start } from '../src/database';
@@ -72,7 +72,7 @@ describe('User', (): void => {
         });
     });
 
-    it('Should catch validation error', async (done): Promise<void> => {
+    it('Should expect Validation Error', async (done): Promise<void> => {
       await UserModel.insertMany([newUser]);
 
       request(app)
@@ -120,10 +120,31 @@ describe('User', (): void => {
           },
         );
     });
+
+    it('Should return empty array', async (done): Promise<void> => {
+      request(app)
+        .get(userURL)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(OK)
+        .then(
+          async ({ body }): Promise<void> => {
+            // check response
+            expect(body).toHaveProperty('users');
+            expect(body.users).toHaveLength(0);
+
+            // check database
+            const users = await UserModel.find({});
+            expect(users).toHaveLength(0);
+
+            done();
+          },
+        );
+    });
   });
 
   describe(`GET ${userURL}${ID}`, (): void => {
-    it('should retrieve a user', async (done): Promise<void> => {
+    it('Should retrieve a user', async (done): Promise<void> => {
       const [res] = await UserModel.insertMany([newUser]);
 
       request(app)
@@ -143,7 +164,9 @@ describe('User', (): void => {
         );
     });
 
-    it('should expect an 404', async (done): Promise<void> => {
+    it(`Should expect ${getStatusText(BAD_REQUEST)}`, async (done): Promise<
+    void
+    > => {
       const [res] = await UserModel.insertMany([newUser]);
       await UserModel.findByIdAndRemove(res._id);
 
@@ -163,7 +186,7 @@ describe('User', (): void => {
   });
 
   describe(`PUT ${userURL}${ID}`, (): void => {
-    it('should update a user', async (done): Promise<void> => {
+    it('Should update a user', async (done): Promise<void> => {
       const user = new UserModel(newUser);
       const { _id } = await user.save();
 
@@ -189,7 +212,9 @@ describe('User', (): void => {
         );
     });
 
-    it(`Should expect ${NOT_FOUND}`, async (done): Promise<void> => {
+    it(`Should expect ${getStatusText(NOT_FOUND)}`, async (done): Promise<
+    void
+    > => {
       // create user to have a valid id
       const user = new UserModel(newUser);
       const { _id } = await user.save();
@@ -214,7 +239,7 @@ describe('User', (): void => {
   });
 
   describe(`DELETE ${userURL}${ID}`, (): void => {
-    it('should delete a user', async (done): Promise<void> => {
+    it('Should delete a user', async (done): Promise<void> => {
       const user = new UserModel(newUser);
       const { _id } = await user.save();
 
@@ -231,6 +256,29 @@ describe('User', (): void => {
             done();
           },
         );
+    });
+
+    it(`Should expect ${getStatusText(NOT_FOUND)}`, async (done): Promise<void> => {
+      // create user to have a valid id
+      const user = new UserModel(newUser);
+      const { _id } = await user.save();
+
+      // then delete it, we are expecting 404
+      await UserModel.findByIdAndDelete(_id);
+
+      request(app)
+        .delete(`${userURL}/${_id}`)
+        .send({})
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(NOT_FOUND)
+        .then(({ body }): void => {
+          expect(body).toHaveProperty('error');
+          expect(body.error.name).toBe('HTTPNotFound');
+          expect(body.error.statusCode).toBe(NOT_FOUND);
+          expect(body.error.message).toBe('user not found');
+          done();
+        });
     });
   });
 });
