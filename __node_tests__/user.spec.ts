@@ -156,6 +156,7 @@ describe('User', (): void => {
           expect(body).toHaveProperty('error');
           expect(body.error.name).toBe('HTTPNotFound');
           expect(body.error.statusCode).toBe(NOT_FOUND);
+          expect(body.error.message).toBe('user not found');
           done();
         });
     });
@@ -206,6 +207,7 @@ describe('User', (): void => {
           expect(body).toHaveProperty('error');
           expect(body.error.name).toBe('HTTPNotFound');
           expect(body.error.statusCode).toBe(NOT_FOUND);
+          expect(body.error.message).toBe('user not found');
           done();
         });
     });
