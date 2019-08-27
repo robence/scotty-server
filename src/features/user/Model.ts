@@ -1,15 +1,21 @@
 import { Document, Schema, Model, model } from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
+/* eslint-disable */
+const TagModel = require('../tag/Model');
+const AccountModel = require('../account/Model');
 
 export type UserType = {
   username: string;
   email: string;
+  tags: any[];
+  accounts: any[];
 };
 
 export type UserModelType = Document & UserType;
 
 const UserSchema = new Schema(
   {
+    // TODO: password
     username: {
       type: String,
       unique: true,
@@ -27,6 +33,8 @@ const UserSchema = new Schema(
       required: [true, "can't be blank"],
       match: [/\S+@\S+\.\S+/, 'is invalid, use email@server.domain format'],
     },
+    tags: { type: [TagModel], default: [] },
+    accounts: { type: [AccountModel], default: [] },
   },
   { timestamps: true },
 );

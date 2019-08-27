@@ -1,5 +1,8 @@
 import { OK } from 'http-status-codes';
 
+require('../tag/Model');
+require('../account/Model');
+/* eslint-disable */
 import UserModel, { UserType, UserModelType } from './Model';
 import ResponseType from '../../types/response';
 import { HTTPBadRequest, HTTPNotFound } from '../../error/http-400.error';
@@ -31,11 +34,18 @@ class UserService {
     id: number,
     updateObject: Partial<UserType>,
   ): Promise<ResponseType<SingleUser>> {
-    const body = await UserModel.findById(id);
-    if (!body) throw new HTTPNotFound('user not found');
-    update<UserModelType, Partial<UserType>>(body, updateObject);
-    const user = await body.save();
+    const userModel = await UserModel.findById(id);
+    if (!userModel) throw new HTTPNotFound('user not found');
+
+    // one liner to modify a mongoose model
+    // similar to { ...userModel, ...updateObject } but
+    // 1) that does not work, mongoose model has prototype methods
+    // 2) does not create new instance, _id remains the same
+    update<UserModelType, Partial<UserType>>(userModel, updateObject);
+
+    const user = await userModel.save();
     if (!user) throw new HTTPBadRequest('could not save user');
+
     return { status: OK, payload: { user } };
   }
 

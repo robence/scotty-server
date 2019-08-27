@@ -18,11 +18,15 @@ const userURL = `/${BASE}${USER}`;
 const newUser: UserType = {
   email: 'example@email.com', //
   username: 'johndoe73',
+  accounts: [],
+  tags: [],
 };
 
 const newUser2: UserType = {
   email: 'example2@email.com',
   username: 'janedoe73',
+  accounts: [],
+  tags: [],
 };
 
 const newUsers = [newUser, newUser2];
@@ -65,8 +69,8 @@ describe('User', (): void => {
         .expect(OK)
         .then(({ body }): void => {
           expect(body).toHaveProperty('user');
-          const { username, email } = body.user;
-          const actual: UserType = { username, email };
+          const { username, email, tags, accounts } = body.user;
+          const actual: UserType = { username, email, tags, accounts };
           expect(actual).toEqual(newUser);
           done();
         });
@@ -165,7 +169,7 @@ describe('User', (): void => {
     });
 
     it(`Should expect ${getStatusText(BAD_REQUEST)}`, async (done): Promise<
-    void
+      void
     > => {
       const [res] = await UserModel.insertMany([newUser]);
       await UserModel.findByIdAndRemove(res._id);
@@ -216,7 +220,7 @@ describe('User', (): void => {
     });
 
     it(`Should expect ${getStatusText(NOT_FOUND)}`, async (done): Promise<
-    void
+      void
     > => {
       // create user to have a valid id
       const user = new UserModel(newUser);
@@ -262,7 +266,7 @@ describe('User', (): void => {
     });
 
     it(`Should expect ${getStatusText(NOT_FOUND)}`, async (done): Promise<
-    void
+      void
     > => {
       // create user to have a valid id
       const user = new UserModel(newUser);
