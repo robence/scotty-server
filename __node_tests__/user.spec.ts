@@ -6,14 +6,13 @@ import { OK, NOT_FOUND, BAD_REQUEST, getStatusText } from 'http-status-codes';
 import * as dotenv from 'dotenv';
 
 import UserModel, { UserType } from '../src/features/user/Model';
-import { BASE, ID, USER } from '../src/url';
 import App from '../src/app';
 import { disconnect, start } from '../src/database';
 import { format } from '../src/utils/model';
 
 let app: Application;
 
-const userURL = `/${BASE}${USER}`;
+const userURL = `/api/users`;
 
 const newUser: UserType = {
   email: 'example@email.com', //
@@ -101,6 +100,37 @@ describe('User', (): void => {
     });
   });
 
+  describe(`POST ${userURL}/tag`, (): void => {
+    it('Should add tag to user', async (done): Promise<void> => {
+      const user = new UserModel(newUser);
+      // @ts-ignore
+      const { _id } = await user.save();
+
+      request(app)
+        .post(`${userURL}/tag`)
+        .send({ tag: 'First Tag', userId: _id })
+        .set('Accept', 'application/json')
+        // .expect('Content-Type', /json/)
+        .expect(OK)
+        .then(
+          async ({ body }): Promise<void> => {
+            expect(body).toHaveProperty('user');
+            expect(body).toHaveProperty('user.tags');
+            expect(body.user.tags).not.toHaveLength(0);
+            expect(body.user.tags[0]).toHaveProperty('_id');
+            expect(body.user.tags[0].name).toBe('First Tag');
+
+            const updatedUser = await UserModel.findById(_id);
+            expect(updatedUser).toHaveProperty('tags');
+            expect(updatedUser.tags).not.toHaveLength(0);
+            expect(body.user.tags[0]).toHaveProperty('_id');
+            expect(body.user.tags[0].name).toBe('First Tag');
+            done();
+          },
+        );
+    });
+  });
+
   describe(`GET ${userURL}`, (): void => {
     it('Should retrieve all users', async (done): Promise<void> => {
       await UserModel.insertMany(newUsers);
@@ -147,7 +177,7 @@ describe('User', (): void => {
     });
   });
 
-  describe(`GET ${userURL}${ID}`, (): void => {
+  describe(`GET ${userURL}:id`, (): void => {
     it('Should retrieve a user', async (done): Promise<void> => {
       const [res] = await UserModel.insertMany([newUser]);
 
@@ -189,7 +219,7 @@ describe('User', (): void => {
     });
   });
 
-  describe(`PUT ${userURL}${ID}`, (): void => {
+  describe(`PUT ${userURL}:id`, (): void => {
     it('Should update a user', async (done): Promise<void> => {
       const user = new UserModel(newUser);
       // @ts-ignore
@@ -245,7 +275,7 @@ describe('User', (): void => {
     });
   });
 
-  describe(`DELETE ${userURL}${ID}`, (): void => {
+  describe(`DELETE ${userURL}:id`, (): void => {
     it('Should delete a user', async (done): Promise<void> => {
       const user = new UserModel(newUser);
       const { _id } = await user.save();

@@ -1,13 +1,15 @@
 import { Document, Schema, Model, model } from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
 
-export type ExpenseType = {
+// TODO: add types
+
+interface ExpenseType {
   amount: number;
   categoryId: any;
   tagIds: any[];
   accountId: any;
   userId: any;
-};
+}
 
 export type ExpenseModelType = Document & ExpenseType;
 

@@ -8,7 +8,8 @@
     "start": "ts-node src/index.ts",
     "server-dev": "node ./node_modules/nodemon/bin/nodemon.js",
     "server-build": "tsc",
-    "format": "prettier-eslint --write \"src/**/*.js\""
+    "lint": "eslint . --ext ts",
+    "lint-fix": "eslint . --ext ts --fix"
   },
   "author": "scotty-p",
   "license": "ISC",
@@ -41,6 +42,7 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-config-airbnb-typescript": "^4.0.1",
     "eslint-config-prettier": "^4.3.0",
     "eslint-plugin-import": "^2.18.0",
     "eslint-plugin-jest": "^22.7.2",

@@ -4,10 +4,7 @@ import * as cors from 'cors';
 import { Application } from 'express';
 import { Logger } from '@overnightjs/logger';
 
-import {
-  loggerMiddleware,
-  clientErrorHandler,
-} from './middleware';
+import { loggerMiddleware, clientErrorHandler } from './middleware';
 import controllers from './features';
 
 export default class App extends Server {

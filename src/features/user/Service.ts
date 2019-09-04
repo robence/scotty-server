@@ -1,19 +1,33 @@
 import { OK } from 'http-status-codes';
 
-require('../tag/Model');
-require('../account/Model');
-/* eslint-disable */
 import UserModel, { UserType, UserModelType } from './Model';
 import ResponseType from '../../types/response';
 import { HTTPBadRequest, HTTPNotFound } from '../../error/http-400.error';
 import { update } from '../../utils/model';
 
-type SingleUser = { user: UserType };
-type MultipleUsers = { users: UserType[] };
+interface SingleUser {
+  user: UserType;
+}
+interface MultipleUsers {
+  users: UserType[];
+}
+interface TagRequest {
+  userId: number;
+  tag: string;
+}
 
 class UserService {
   async createUser(body: UserType): Promise<ResponseType<SingleUser>> {
     const userModel = new UserModel(body);
+    const user = await userModel.save();
+    if (!user) throw new HTTPBadRequest('could not save user');
+    return { status: OK, payload: { user } };
+  }
+
+  async addTag({ userId, tag }: TagRequest): Promise<ResponseType<SingleUser>> {
+    const userModel = await UserModel.findById(userId);
+    if (!userModel) throw new HTTPNotFound('user not found');
+    userModel.tags.push({ name: tag });
     const user = await userModel.save();
     if (!user) throw new HTTPBadRequest('could not save user');
     return { status: OK, payload: { user } };

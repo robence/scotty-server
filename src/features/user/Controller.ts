@@ -8,31 +8,45 @@ import {
   Put,
   Delete,
 } from '@overnightjs/core';
-import { BASE, ID, USER } from '../../url';
 import UserService from './Service';
 
-@Controller(`${BASE}${USER}`)
+@Controller('api/users')
 @ClassWrapper(expressAsyncHandler)
 class UserController {
-  @Post()
+  @Post('tag')
+  private async addTag(req: Request, res: Response): Promise<void> {
+    console.log('req.body');
+    console.log(req.body);
+    const { status, payload } = await UserService.addTag(req.body);
+    res.status(status).send(payload);
+    // res.status(200).send('Oke');
+  }
+
+  @Post('/')
   private async create(req: Request, res: Response): Promise<void> {
     const { status, payload } = await UserService.createUser(req.body);
     res.status(status).send(payload);
   }
 
-  @Get()
+  @Get('/')
   private async readAll(req: Request, res: Response): Promise<void> {
     const { status, payload } = await UserService.retrieveUsers();
     res.status(status).send(payload);
   }
 
-  @Get(ID)
+  @Get(':id')
   private async read(req: Request, res: Response): Promise<void> {
     const { status, payload } = await UserService.retrieveUser(req.params.id);
     res.status(status).send(payload);
   }
 
-  @Put(ID)
+  @Get('abc/:id')
+  private async read2(req: Request, res: Response): Promise<void> {
+    const { status, payload } = await UserService.retrieveUser(req.params.id);
+    res.status(status).send(payload);
+  }
+
+  @Put(':id')
   private async update(req: Request, res: Response): Promise<void> {
     const { status, payload } = await UserService.updateUser(
       req.params.id,
@@ -41,7 +55,7 @@ class UserController {
     res.status(status).send(payload);
   }
 
-  @Delete(ID)
+  @Delete(':id')
   private async delete(req: Request, res: Response): Promise<void> {
     const { status, payload } = await UserService.deleteUser(req.params.id);
     res.status(status).send(payload);

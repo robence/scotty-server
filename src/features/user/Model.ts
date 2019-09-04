@@ -1,17 +1,25 @@
 import { Document, Schema, Model, model } from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
-/* eslint-disable */
-const TagModel = require('../tag/Model');
-const AccountModel = require('../account/Model');
 
-export type UserType = {
+interface TagType {
+  name: string;
+}
+
+interface AccountType {
+  name: string;
+}
+
+export interface UserType {
   username: string;
   email: string;
-  tags: any[];
-  accounts: any[];
-};
+  tags: TagType[];
+  accounts: AccountType[];
+}
 
 export type UserModelType = Document & UserType;
+
+const TagSchema = new Schema({ name: { type: String } });
+const AccountSchema = new Schema({ name: { type: String } });
 
 const UserSchema = new Schema(
   {
@@ -33,8 +41,8 @@ const UserSchema = new Schema(
       required: [true, "can't be blank"],
       match: [/\S+@\S+\.\S+/, 'is invalid, use email@server.domain format'],
     },
-    tags: { type: [TagModel], default: [] },
-    accounts: { type: [AccountModel], default: [] },
+    tags: { type: [TagSchema], default: [] },
+    accounts: { type: [AccountSchema], default: [] },
   },
   { timestamps: true },
 );
