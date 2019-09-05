@@ -2,9 +2,6 @@ import * as request from 'supertest';
 import { Application } from 'express';
 import { Logger } from '@overnightjs/logger';
 import { OK, NOT_FOUND, BAD_REQUEST, getStatusText } from 'http-status-codes';
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-import * as dotenv from 'dotenv';
-
 import UserModel, { UserType } from '../src/features/user/Model';
 import App from '../src/app';
 import { disconnect, start } from '../src/database';
@@ -15,7 +12,7 @@ let app: Application;
 const userURL = `/api/users`;
 
 const newUser: UserType = {
-  email: 'example@email.com', //
+  email: 'example@email.com',
   username: 'johndoe73',
   accounts: [],
   tags: [],
