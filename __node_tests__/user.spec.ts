@@ -248,62 +248,6 @@ describe('User', (): void => {
     });
   });
 
-  describe(`PUT ${userURL}:id`, (): void => {
-    it('Should update a user', async (done): Promise<void> => {
-      const user = new UserModel(newUser);
-      // @ts-ignore
-      const { _id, updatedAt: previousUpdated } = await user.save();
-
-      request(app)
-        .put(`${userURL}/${_id}`)
-        .send(newUser2)
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .expect(OK)
-        .then(
-          async ({ body }): Promise<void> => {
-            expect(body).toHaveProperty('user');
-            const updatedUser = await UserModel.findById(_id);
-
-            const {
-              actual: { updatedAt: actualUpdated, ...actual },
-              expected: { updatedAt: expectedUpdated, ...expected },
-            } = format(updatedUser, body.user);
-
-            expect(expected).toEqual(actual);
-            expect(actualUpdated).toEqual(expectedUpdated);
-            expect(actualUpdated).not.toEqual(previousUpdated);
-            done();
-          },
-        );
-    });
-
-    it(`Should expect ${getStatusText(NOT_FOUND)}`, async (done): Promise<
-      void
-    > => {
-      // create user to have a valid id
-      const user = new UserModel(newUser);
-      const { _id } = await user.save();
-
-      // then delete it, we are expecting 404
-      await UserModel.findByIdAndDelete(_id);
-
-      request(app)
-        .put(`${userURL}/${_id}`)
-        .send({})
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .expect(NOT_FOUND)
-        .then(({ body }): void => {
-          expect(body).toHaveProperty('error');
-          expect(body.error.name).toBe('HTTPNotFound');
-          expect(body.error.statusCode).toBe(NOT_FOUND);
-          expect(body.error.message).toBe('user not found');
-          done();
-        });
-    });
-  });
-
   describe(`DELETE ${userURL}:id`, (): void => {
     it('Should delete a user', async (done): Promise<void> => {
       const user = new UserModel(newUser);
