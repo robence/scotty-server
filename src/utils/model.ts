@@ -1,14 +1,8 @@
-export function update<ModelType, FieldListType>(
-  model: ModelType,
-  fieldList: FieldListType,
-): void {
-  /* eslint-disable */
-  for (const [key, value] of Object.entries(fieldList)) {
-    model[key] = value;
-  }
-}
-
-export function format(rawActual, rawExpected) {
+export default function format(
+  rawActual,
+  rawExpected,
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+): { actual: any; expected: any } {
   // changes
   const createdAt = new Date(rawExpected.createdAt);
   const updatedAt = new Date(rawExpected.updatedAt);

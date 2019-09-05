@@ -1,13 +1,6 @@
 import { Request, Response } from 'express';
 import * as expressAsyncHandler from 'express-async-handler';
-import {
-  ClassWrapper,
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-} from '@overnightjs/core';
+import { ClassWrapper, Controller, Get, Post, Delete } from '@overnightjs/core';
 import UserService from './Service';
 
 @Controller('api/users')
@@ -44,7 +37,7 @@ class UserController {
   }
 
   @Delete(':id')
-  private async delete(req: Request, res: Response): Promise<void> {
+  private async deleteUser(req: Request, res: Response): Promise<void> {
     const { status, payload } = await UserService.deleteUser(req.params.id);
     res.status(status).send(payload);
   }

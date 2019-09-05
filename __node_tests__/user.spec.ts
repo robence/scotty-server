@@ -5,7 +5,7 @@ import { OK, NOT_FOUND, BAD_REQUEST, getStatusText } from 'http-status-codes';
 import UserModel, { UserType } from '../src/features/user/Model';
 import App from '../src/app';
 import { disconnect, start } from '../src/database';
-import { format } from '../src/utils/model';
+import format from '../src/utils/model';
 
 let app: Application;
 
