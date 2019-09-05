@@ -11,9 +11,9 @@ interface SingleUser {
 interface MultipleUsers {
   users: UserType[];
 }
-interface TagRequest {
+interface SubDocumentInsert {
   userId: number;
-  tag: string;
+  name: string;
 }
 
 class UserService {
@@ -24,10 +24,25 @@ class UserService {
     return { status: OK, payload: { user } };
   }
 
-  async addTag({ userId, tag }: TagRequest): Promise<ResponseType<SingleUser>> {
+  async addTag({
+    userId,
+    name,
+  }: SubDocumentInsert): Promise<ResponseType<SingleUser>> {
     const userModel = await UserModel.findById(userId);
     if (!userModel) throw new HTTPNotFound('user not found');
-    userModel.tags.push({ name: tag });
+    userModel.tags.push({ name });
+    const user = await userModel.save();
+    if (!user) throw new HTTPBadRequest('could not save user');
+    return { status: OK, payload: { user } };
+  }
+
+  async addAccount({
+    userId,
+    name,
+  }: SubDocumentInsert): Promise<ResponseType<SingleUser>> {
+    const userModel = await UserModel.findById(userId);
+    if (!userModel) throw new HTTPNotFound('user not found');
+    userModel.accounts.push({ name });
     const user = await userModel.save();
     if (!user) throw new HTTPBadRequest('could not save user');
     return { status: OK, payload: { user } };

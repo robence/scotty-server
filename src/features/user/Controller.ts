@@ -15,11 +15,14 @@ import UserService from './Service';
 class UserController {
   @Post('tag')
   private async addTag(req: Request, res: Response): Promise<void> {
-    console.log('req.body');
-    console.log(req.body);
     const { status, payload } = await UserService.addTag(req.body);
     res.status(status).send(payload);
-    // res.status(200).send('Oke');
+  }
+
+  @Post('account')
+  private async addAccount(req: Request, res: Response): Promise<void> {
+    const { status, payload } = await UserService.addAccount(req.body);
+    res.status(status).send(payload);
   }
 
   @Post('/')
@@ -36,12 +39,6 @@ class UserController {
 
   @Get(':id')
   private async read(req: Request, res: Response): Promise<void> {
-    const { status, payload } = await UserService.retrieveUser(req.params.id);
-    res.status(status).send(payload);
-  }
-
-  @Get('abc/:id')
-  private async read2(req: Request, res: Response): Promise<void> {
     const { status, payload } = await UserService.retrieveUser(req.params.id);
     res.status(status).send(payload);
   }

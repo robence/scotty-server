@@ -103,14 +103,13 @@ describe('User', (): void => {
   describe(`POST ${userURL}/tag`, (): void => {
     it('Should add tag to user', async (done): Promise<void> => {
       const user = new UserModel(newUser);
-      // @ts-ignore
       const { _id } = await user.save();
 
       request(app)
         .post(`${userURL}/tag`)
-        .send({ tag: 'First Tag', userId: _id })
+        .send({ name: 'First Tag', userId: _id })
         .set('Accept', 'application/json')
-        // .expect('Content-Type', /json/)
+        .expect('Content-Type', /json/)
         .expect(OK)
         .then(
           async ({ body }): Promise<void> => {
@@ -125,6 +124,36 @@ describe('User', (): void => {
             expect(updatedUser.tags).not.toHaveLength(0);
             expect(body.user.tags[0]).toHaveProperty('_id');
             expect(body.user.tags[0].name).toBe('First Tag');
+            done();
+          },
+        );
+    });
+  });
+
+  describe(`POST ${userURL}/account`, (): void => {
+    it('Should add account to user', async (done): Promise<void> => {
+      const user = new UserModel(newUser);
+      const { _id } = await user.save();
+
+      request(app)
+        .post(`${userURL}/account`)
+        .send({ name: 'First Account', userId: _id })
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(OK)
+        .then(
+          async ({ body }): Promise<void> => {
+            expect(body).toHaveProperty('user');
+            expect(body).toHaveProperty('user.accounts');
+            expect(body.user.accounts).not.toHaveLength(0);
+            expect(body.user.accounts[0]).toHaveProperty('_id');
+            expect(body.user.accounts[0].name).toBe('First Account');
+
+            const updatedUser = await UserModel.findById(_id);
+            expect(updatedUser).toHaveProperty('accounts');
+            expect(updatedUser.accounts).not.toHaveLength(0);
+            expect(body.user.accounts[0]).toHaveProperty('_id');
+            expect(body.user.accounts[0].name).toBe('First Account');
             done();
           },
         );
