@@ -3,23 +3,27 @@ import * as uniqueValidator from 'mongoose-unique-validator';
 
 // TODO: add types
 
-interface ExpenseType {
+export interface ExpenseType {
   amount: number;
-  categoryId: any;
-  tagIds: any[];
-  accountId: any;
-  userId: any;
+  categoryId: string;
+  tagIds: string[];
+  accountId: string;
+  userId: string;
 }
 
 export type ExpenseModelType = Document & ExpenseType;
 
 const ExpenseSchema = new Schema(
   {
-    amount: { type: Number },
-    categoryId: { type: Schema.Types.ObjectId, ref: 'Category' },
-    tagIds: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
-    accountId: { type: Schema.Types.ObjectId, ref: 'Account' },
-    userId: { type: Schema.Types.ObjectId, ref: 'User' },
+    amount: { type: Number, required: true },
+    categoryId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Category',
+      required: true,
+    },
+    tagIds: [{ type: Schema.Types.ObjectId, ref: 'Tag', default: [] }],
+    accountId: { type: Schema.Types.ObjectId, ref: 'Account', required: true },
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   },
   { timestamps: true },
 );
