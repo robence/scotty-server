@@ -5,7 +5,6 @@ import { OK, NOT_FOUND, BAD_REQUEST, getStatusText } from 'http-status-codes';
 import UserModel, { UserType } from '../src/features/user/Model';
 import App from '../src/app';
 import { disconnect, start } from '../src/database';
-import format from '../src/utils/model';
 
 let app: Application;
 
@@ -217,8 +216,13 @@ describe('User', (): void => {
             expect(body).toHaveProperty('user');
             const user = await UserModel.findById(res._id);
 
-            const { actual, expected } = format(user, body.user);
-            expect(expected).toEqual(actual);
+            const { email, accounts, username, tags } = body.user;
+            expect({ email, accounts, username, tags }).toMatchObject(newUser);
+
+            expect(user.email).toBe(email);
+            expect(user.username).toBe(username);
+            expect(user.accounts).toHaveLength(accounts.length);
+            expect(user.tags).toHaveLength(tags.length);
             done();
           },
         );

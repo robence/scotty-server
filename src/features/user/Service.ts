@@ -52,15 +52,16 @@ class UserService {
     return { status: OK, payload: { users } };
   }
 
-  async retrieveUser(id: number): Promise<ResponseType<SingleUser>> {
+  async retrieveUser(id: string): Promise<ResponseType<SingleUser>> {
     const user = await UserModel.findById(id);
     if (!user) throw new HTTPNotFound('user not found');
     return { status: OK, payload: { user } };
   }
 
-  async deleteUser(id: number): Promise<ResponseType<string>> {
+  async deleteUser(id: string): Promise<ResponseType<string>> {
     const user = await UserModel.findByIdAndRemove(id);
     if (!user) throw new HTTPNotFound('user not found');
+    /* eslint-disable-next-line no-underscore-dangle */
     return { status: OK, payload: user._id };
   }
 }
