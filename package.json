@@ -1,7 +1,7 @@
 {
   "name": "scotty-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Node application managing your expenses",
   "main": "src/index.js",
   "scripts": {
     "test": "jest --detectOpenHandles --forceExit",
@@ -11,7 +11,11 @@
     "lint": "eslint . --ext ts",
     "lint-fix": "eslint . --ext ts --fix"
   },
-  "author": "scotty-p",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/robence/scotty-server.git"
+  },
+  "author": "robence",
   "license": "ISC",
   "dependencies": {
     "@overnightjs/core": "^1.4.1",
@@ -48,7 +52,7 @@
     "eslint-plugin-jest": "^22.7.2",
     "eslint-plugin-prettier": "^3.1.0",
     "jest": "^24.1.0",
-    "nodemon": "^1.18.10",
+    "nodemon": "^1.19.2",
     "prettier": "^1.18.2",
     "prettier-eslint": "^8.8.2",
     "prettier-eslint-cli": "^4.7.1",

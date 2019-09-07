@@ -23,7 +23,6 @@ const AccountSchema = new Schema({ name: { type: String } });
 
 const UserSchema = new Schema(
   {
-    // TODO: password
     username: {
       type: String,
       unique: true,

@@ -17,15 +17,6 @@ const newUser: UserType = {
   tags: [],
 };
 
-const newUser2: UserType = {
-  email: 'example2@email.com',
-  username: 'janedoe73',
-  accounts: [],
-  tags: [],
-};
-
-const newUsers = [newUser, newUser2];
-
 describe('User', (): void => {
   beforeEach((done): void => {
     UserModel.deleteMany({}).then((): void => done());
@@ -64,8 +55,8 @@ describe('User', (): void => {
         .expect(OK)
         .then(({ body }): void => {
           expect(body).toHaveProperty('user');
-          const { username, email, tags, accounts } = body.user;
-          const actual: UserType = { username, email, tags, accounts };
+          const { username, email, accounts, tags } = body.user;
+          const actual: UserType = { username, email, accounts, tags };
           expect(actual).toEqual(newUser);
           done();
         });
@@ -158,7 +149,7 @@ describe('User', (): void => {
 
   describe(`GET ${userURL}`, (): void => {
     it('Should retrieve all users', async (done): Promise<void> => {
-      await UserModel.insertMany(newUsers);
+      await UserModel.insertMany([newUser]);
 
       request(app)
         .get(userURL)
@@ -169,11 +160,11 @@ describe('User', (): void => {
           async ({ body }): Promise<void> => {
             // check response
             expect(body).toHaveProperty('users');
-            expect(body.users).toHaveLength(newUsers.length);
+            expect(body.users).toHaveLength(1);
 
             // check database
             const users = await UserModel.find({});
-            expect(users).toHaveLength(newUsers.length);
+            expect(users).toHaveLength(1);
 
             done();
           },

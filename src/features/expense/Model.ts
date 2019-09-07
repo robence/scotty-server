@@ -1,8 +1,6 @@
 import { Document, Schema, Model, model } from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
 
-// TODO: add types
-
 export interface ExpenseType {
   amount: number;
   categoryId: string;
