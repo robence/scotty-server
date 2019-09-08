@@ -24,6 +24,14 @@ class ExpenseService {
     const expenses = await ExpenseModel.find({});
     return { status: OK, payload: { expenses } };
   }
+
+  async retrieveExpensesByUser(
+    userId: string,
+  ): Promise<ResponseType<MultipleExpenses>> {
+    // @ts-ignore
+    const expenses = await ExpenseModel.getExpensesByUser(userId);
+    return { status: OK, payload: { expenses } };
+  }
 }
 
 const instance = new ExpenseService();

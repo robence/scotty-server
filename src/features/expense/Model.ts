@@ -1,5 +1,7 @@
-import { Document, Schema, Model, model } from 'mongoose';
+import { Document, Schema, Model, model, Types } from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
+
+// var ObjectId = require('mongoose').;
 
 export interface ExpenseType {
   amount: number;
@@ -27,6 +29,16 @@ const ExpenseSchema = new Schema(
 );
 
 ExpenseSchema.plugin(uniqueValidator);
+
+/* eslint-disable-next-line func-names */
+ExpenseSchema.statics.getExpensesByUser = function(id): any {
+  // const userId = new mongo.ObjectId(id);
+  const userId = new Types.ObjectId(id);
+  // var query = { campaign_id: new Types.ObjectId(campaign._id) };
+  console.log('hello there');
+  console.log(userId);
+  return this.find({ userId });
+};
 
 const ExpenseModel: Model<ExpenseModelType> = model<ExpenseModelType>(
   'Expense',

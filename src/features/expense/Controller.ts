@@ -17,6 +17,14 @@ class ExpenseController {
     const { status, payload } = await ExpenseService.retrieveExpenses();
     res.status(status).send(payload);
   }
+
+  @Get('user/:id')
+  private async getExpensesByUser(req: Request, res: Response): Promise<void> {
+    const { status, payload } = await ExpenseService.retrieveExpensesByUser(
+      req.params.id,
+    );
+    res.status(status).send(payload);
+  }
 }
 
 const instance = new ExpenseController();
