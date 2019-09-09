@@ -100,17 +100,14 @@ describe('User', (): void => {
         .expect(OK)
         .then(
           async ({ body }): Promise<void> => {
-            expect(body).toHaveProperty('user');
-            expect(body).toHaveProperty('user.tags');
-            expect(body.user.tags).not.toHaveLength(0);
-            expect(body.user.tags[0]).toHaveProperty('_id');
-            expect(body.user.tags[0].name).toBe('First Tag');
+            expect(body).toHaveProperty('tag');
+            expect(body).toHaveProperty('tag._id');
+            expect(body.tag.name).toBe('First Tag');
 
             const updatedUser = await UserModel.findById(_id);
             expect(updatedUser).toHaveProperty('tags');
             expect(updatedUser.tags).not.toHaveLength(0);
-            expect(body.user.tags[0]).toHaveProperty('_id');
-            expect(body.user.tags[0].name).toBe('First Tag');
+            expect(updatedUser.tags[0].name).toBe('First Tag');
             done();
           },
         );

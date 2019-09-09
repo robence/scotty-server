@@ -1,6 +1,6 @@
 import { OK } from 'http-status-codes';
 
-import UserModel, { UserType } from './Model';
+import UserModel, { UserType, TagType } from './Model';
 import ResponseType from '../../types/response';
 import { HTTPBadRequest, HTTPNotFound } from '../../error/http-400.error';
 
@@ -9,6 +9,10 @@ interface SingleUser {
 }
 interface MultipleUsers {
   users: UserType[];
+}
+
+interface TagResponse {
+  tag: TagType;
 }
 interface SubDocumentInsert {
   userId: number;
@@ -26,13 +30,14 @@ class UserService {
   async addTag({
     userId,
     name,
-  }: SubDocumentInsert): Promise<ResponseType<SingleUser>> {
+  }: SubDocumentInsert): Promise<ResponseType<TagResponse>> {
     const userModel = await UserModel.findById(userId);
     if (!userModel) throw new HTTPNotFound('user not found');
     userModel.tags.push({ name });
     const user = await userModel.save();
+    const tag = user.tags[user.tags.length - 1];
     if (!user) throw new HTTPBadRequest('could not save user');
-    return { status: OK, payload: { user } };
+    return { status: OK, payload: { tag } };
   }
 
   async addAccount({

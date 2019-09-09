@@ -1,7 +1,7 @@
 import { Document, Schema, Model, model } from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
 
-interface TagType {
+export interface TagType {
   name: string;
 }
 
