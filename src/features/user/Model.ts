@@ -5,7 +5,7 @@ export interface TagType {
   name: string;
 }
 
-interface AccountType {
+export interface AccountType {
   name: string;
 }
 

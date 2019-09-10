@@ -127,17 +127,14 @@ describe('User', (): void => {
         .expect(OK)
         .then(
           async ({ body }): Promise<void> => {
-            expect(body).toHaveProperty('user');
-            expect(body).toHaveProperty('user.accounts');
-            expect(body.user.accounts).not.toHaveLength(0);
-            expect(body.user.accounts[0]).toHaveProperty('_id');
-            expect(body.user.accounts[0].name).toBe('First Account');
+            expect(body).toHaveProperty('account');
+            expect(body).toHaveProperty('account._id');
+            expect(body.account.name).toBe('First Account');
 
             const updatedUser = await UserModel.findById(_id);
             expect(updatedUser).toHaveProperty('accounts');
             expect(updatedUser.accounts).not.toHaveLength(0);
-            expect(body.user.accounts[0]).toHaveProperty('_id');
-            expect(body.user.accounts[0].name).toBe('First Account');
+            expect(updatedUser.accounts[0].name).toBe('First Account');
             done();
           },
         );

@@ -18,6 +18,7 @@ export default function clientErrorHandler(
   // handle mongoose validation failure
   else if (error.name === 'ValidationError') {
     Logger.Warn(`${req.path}  Caught ${error.name}.`);
+    Logger.Err(error);
     res.status(BAD_REQUEST).send({ error });
   } else {
     Logger.Err('Unexpected error.');
