@@ -19,13 +19,12 @@ export default function clientErrorHandler(
   else if (error.name === 'ValidationError') {
     Logger.Warn(`${req.path}  Caught ${error.name}.`);
     Logger.Err(error);
-    res.status(BAD_REQUEST).send({ error });
+    Logger.Err(error.stack);
+    res.status(BAD_REQUEST).json({ error });
   } else {
     Logger.Err('Unexpected error.');
-    Logger.Err(error.name);
+    Logger.Err(error);
     Logger.Err(error.stack);
-    Logger.Err(error.message);
-
     res
       .status(INTERNAL_SERVER_ERROR)
       .json({ error: { name: error.name, message: error.message } });

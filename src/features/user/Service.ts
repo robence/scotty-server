@@ -1,7 +1,12 @@
 import { OK } from 'http-status-codes';
 
-import UserModel, { UserType, TagType, AccountType } from './Model';
-import ResponseType from '../../types/response';
+import UserModel, {
+  UserType,
+  UserTypePassword,
+  TagType,
+  AccountType,
+} from './Model';
+import ResponseType from '../../types/service';
 import { HTTPBadRequest, HTTPNotFound } from '../../error/http-400.error';
 
 interface SingleUser {
@@ -23,8 +28,11 @@ interface SubDocumentInsert {
   name: string;
 }
 
+// const salt = await bcrypt.genSalt(10);
+// return bcrypt.hash(password, salt);
+
 class UserService {
-  async createUser(body: UserType): Promise<ResponseType<SingleUser>> {
+  async createUser(body: UserTypePassword): Promise<ResponseType<SingleUser>> {
     const userModel = new UserModel(body);
     const user = await userModel.save();
     if (!user) throw new HTTPBadRequest('could not save user');

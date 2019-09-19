@@ -1,7 +1,7 @@
 import { OK } from 'http-status-codes';
 
 import CategoryModel, { CategoryType } from './Model';
-import ResponseType from '../../types/response';
+import ResponseType from '../../types/service';
 import { HTTPBadRequest } from '../../error/http-400.error';
 
 interface SingleCategory {

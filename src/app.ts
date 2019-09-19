@@ -3,6 +3,7 @@ import { Server } from '@overnightjs/core';
 import * as cors from 'cors';
 import { Application } from 'express';
 import { Logger } from '@overnightjs/logger';
+import * as passport from 'passport';
 
 import { loggerMiddleware, clientErrorHandler } from './middleware';
 import controllers from './features';
@@ -31,7 +32,8 @@ export default class App extends Server {
       .use(cors())
       .use(bodyParser.json())
       .use(bodyParser.urlencoded({ extended: true }))
-      .use(loggerMiddleware);
+      .use(loggerMiddleware)
+      .use(passport.initialize());
   }
 
   private setupRoutes(): void {

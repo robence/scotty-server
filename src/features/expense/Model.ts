@@ -31,12 +31,10 @@ const ExpenseSchema = new Schema(
 ExpenseSchema.plugin(uniqueValidator);
 
 /* eslint-disable-next-line func-names */
-ExpenseSchema.statics.getExpensesByUser = function(id): any {
-  // const userId = new mongo.ObjectId(id);
+ExpenseSchema.statics.getExpensesByUser = function(
+  id: string,
+): ExpenseModelType[] {
   const userId = new Types.ObjectId(id);
-  // var query = { campaign_id: new Types.ObjectId(campaign._id) };
-  console.log('hello there');
-  console.log(userId);
   return this.find({ userId });
 };
 

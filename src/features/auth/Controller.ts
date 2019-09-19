@@ -7,33 +7,43 @@ import {
   Post,
   Middleware,
 } from '@overnightjs/core';
-import passport from 'passport';
+import * as passport from 'passport';
 
-import { authenticate, generateToken, sendToken, logout } from './Service';
+import { authenticate, generateToken, logout } from '../../middleware/auth';
+import { AuthenticatedRequest, TokenizedRequest } from '../../types/controller';
 
 @Controller('api/auth')
 @ClassWrapper(expressAsyncHandler)
-class UserController {
-  @Post('/login')
+class AuthController {
   @Middleware([
-    passport.authenticate('local', { session: false }),
+    passport.authenticate('local', {
+      session: false,
+      failureRedirect: '/error',
+    }),
     generateToken,
   ])
-  private async login(req: Request, res: Response): Promise<void> {
-    res.status(200).send(sendToken(req, res));
+  @Post('login')
+  private async login(
+    { token }: TokenizedRequest,
+    res: Response,
+  ): Promise<void> {
+    res.status(200).send({ token });
   }
 
-  @Get('/logout')
+  @Get('logout')
   private async logout(req: Request, res: Response): Promise<void> {
     res.status(200).send(logout(req, res));
   }
 
-  @Get('/auth-user')
   @Middleware(authenticate)
-  private async authUser(_: Request, res: Response): Promise<void> {
-    res.status(200).send();
+  @Get('auth-user')
+  private async authUser(
+    { user }: AuthenticatedRequest,
+    res: Response,
+  ): Promise<void> {
+    res.status(200).send({ user });
   }
 }
 
-const instance = new UserController();
+const instance = new AuthController();
 export default instance;

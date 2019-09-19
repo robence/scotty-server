@@ -1,9 +1,9 @@
-import passport from 'passport';
+import * as passport from 'passport';
 import { Strategy } from 'passport-local';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import expressJwt from 'express-jwt';
-import UserModel from '../user/Model';
+import * as jwt from 'jsonwebtoken';
+import * as bcrypt from 'bcrypt';
+import * as expressJwt from 'express-jwt';
+import UserModel from '../features/user/Model';
 
 passport.use(
   new Strategy(
@@ -29,16 +29,16 @@ passport.use(
   ),
 );
 
-export const authenticate = expressJwt({ secret: process.env.SECRET_KEY });
+// export const authenticate = expressJwt({ secret: process.env.SECRET_KEY });
+export const authenticate = expressJwt({ secret: 'secret1234' });
 
 export const generateToken = (req, res, next): void => {
-  req.token = jwt.sign({ id: req.user.id }, process.env.SECRET_KEY, {
+  // req.token = jwt.sign({ id: req.user.id }, process.env.SECRET_KEY, {
+  req.token = jwt.sign({ id: req.user.id }, 'secret1234', {
     expiresIn: '12h',
   });
   next();
 };
-
-export const sendToken = (req, res): void => res.send({ token: req.token });
 
 export const logout = (req, res): void => {
   req.logout();
