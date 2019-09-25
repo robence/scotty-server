@@ -1,6 +1,14 @@
 import { Request, Response } from 'express';
 import * as expressAsyncHandler from 'express-async-handler';
-import { ClassWrapper, Controller, Get, Post } from '@overnightjs/core';
+import {
+  ClassWrapper,
+  Controller,
+  Get,
+  Post,
+  Middleware,
+} from '@overnightjs/core';
+import { authenticate } from '../../middleware/auth';
+import { AuthenticatedRequest } from '../../types/controller';
 import ExpenseService from './Service';
 
 @Controller('api/expenses')
@@ -12,6 +20,7 @@ class ExpenseController {
     res.status(status).send(payload);
   }
 
+  @Middleware(authenticate)
   @Get('/')
   private async getExpenses(req: Request, res: Response): Promise<void> {
     const { status, payload } = await ExpenseService.retrieveExpenses();
@@ -22,6 +31,18 @@ class ExpenseController {
   private async getExpensesByUser(req: Request, res: Response): Promise<void> {
     const { status, payload } = await ExpenseService.retrieveExpensesByUser(
       req.params.id,
+    );
+    res.status(status).send(payload);
+  }
+
+  @Middleware(authenticate)
+  @Get('user')
+  private async getExpensesByToken(
+    req: AuthenticatedRequest,
+    res: Response,
+  ): Promise<void> {
+    const { status, payload } = await ExpenseService.retrieveExpensesByUser(
+      req.user.id,
     );
     res.status(status).send(payload);
   }

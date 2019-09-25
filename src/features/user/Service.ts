@@ -28,9 +28,7 @@ interface SubDocumentInsert {
   name: string;
 }
 
-// const salt = await bcrypt.genSalt(10);
-// return bcrypt.hash(password, salt);
-
+// TODO: create default account
 class UserService {
   async createUser(body: UserTypePassword): Promise<ResponseType<SingleUser>> {
     const userModel = new UserModel(body);

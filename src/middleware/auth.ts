@@ -5,6 +5,13 @@ import * as bcrypt from 'bcrypt';
 import * as expressJwt from 'express-jwt';
 import UserModel from '../features/user/Model';
 
+const SECOND = 1;
+const MINUTE = 60;
+const HOUR = 24;
+const DAY = 30;
+const MONTH = 12;
+const YEAR = 999;
+
 passport.use(
   new Strategy(
     async (username, password, done): Promise<void> => {
@@ -35,7 +42,7 @@ export const authenticate = expressJwt({ secret: 'secret1234' });
 export const generateToken = (req, res, next): void => {
   // req.token = jwt.sign({ id: req.user.id }, process.env.SECRET_KEY, {
   req.token = jwt.sign({ id: req.user.id }, 'secret1234', {
-    expiresIn: '12h',
+    expiresIn: SECOND * MINUTE * HOUR * DAY * MONTH * YEAR,
   });
   next();
 };

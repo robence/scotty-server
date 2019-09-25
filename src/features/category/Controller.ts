@@ -1,7 +1,14 @@
 import { Request, Response } from 'express';
 import * as expressAsyncHandler from 'express-async-handler';
-import { ClassWrapper, Controller, Get, Post } from '@overnightjs/core';
+import {
+  ClassWrapper,
+  Controller,
+  Get,
+  Post,
+  Middleware,
+} from '@overnightjs/core';
 import CategoryService from './Service';
+import { authenticate } from '../../middleware/auth';
 
 @Controller('api/categories')
 @ClassWrapper(expressAsyncHandler)
@@ -12,6 +19,7 @@ class CategoryController {
     res.status(status).send(payload);
   }
 
+  @Middleware(authenticate)
   @Get('/')
   private async getCategories(req: Request, res: Response): Promise<void> {
     const { status, payload } = await CategoryService.retrieveCategories();

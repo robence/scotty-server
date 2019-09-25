@@ -1,7 +1,12 @@
 import { Request } from 'express';
+import { UserType } from '../features/user/Model';
 
 interface Token {
   token: string;
+}
+
+interface User {
+  user: UserType;
 }
 
 interface Authenticate {
@@ -9,4 +14,4 @@ interface Authenticate {
 }
 
 export interface AuthenticatedRequest extends Request, Authenticate {}
-export interface TokenizedRequest extends Request, Token {}
+export interface LoginRequest extends Request, Token, User {}

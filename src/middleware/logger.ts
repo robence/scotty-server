@@ -6,7 +6,12 @@ const logger = (req: Request, _: Response, next: NextFunction): void => {
   Logger.Info(`${req.url}  ${req.method}`);
   if (Object.keys(req.body).length) {
     Logger.Info('BODY: ');
-    Logger.Info(JSON.stringify(req.body));
+    if (req.body.password) {
+      const body = { ...req.body, password: '****' };
+      Logger.Info(JSON.stringify(body));
+    } else {
+      Logger.Info(JSON.stringify(req.body));
+    }
   }
   next();
 };

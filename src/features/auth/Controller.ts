@@ -10,7 +10,8 @@ import {
 import * as passport from 'passport';
 
 import { authenticate, generateToken, logout } from '../../middleware/auth';
-import { AuthenticatedRequest, TokenizedRequest } from '../../types/controller';
+import { AuthenticatedRequest, LoginRequest } from '../../types/controller';
+import UserService from '../user/Service';
 
 @Controller('api/auth')
 @ClassWrapper(expressAsyncHandler)
@@ -24,10 +25,10 @@ class AuthController {
   ])
   @Post('login')
   private async login(
-    { token }: TokenizedRequest,
+    { user, token }: LoginRequest,
     res: Response,
   ): Promise<void> {
-    res.status(200).send({ token });
+    res.status(200).send({ user, token });
   }
 
   @Get('logout')
@@ -37,11 +38,12 @@ class AuthController {
 
   @Middleware(authenticate)
   @Get('auth-user')
-  private async authUser(
+  private async findUserByToken(
     { user }: AuthenticatedRequest,
     res: Response,
   ): Promise<void> {
-    res.status(200).send({ user });
+    const { status, payload } = await UserService.retrieveUser(user.id);
+    res.status(status).send(payload);
   }
 }
 
