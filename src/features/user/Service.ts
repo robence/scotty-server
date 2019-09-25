@@ -8,6 +8,7 @@ import UserModel, {
 } from './Model';
 import ResponseType from '../../types/service';
 import { HTTPBadRequest, HTTPNotFound } from '../../error/http-400.error';
+import text from '../../i18n';
 
 interface SingleUser {
   user: UserType;
@@ -32,6 +33,7 @@ interface SubDocumentInsert {
 class UserService {
   async createUser(body: UserTypePassword): Promise<ResponseType<SingleUser>> {
     const userModel = new UserModel(body);
+    userModel.accounts.push({ name: text.acocunt.defaultAccountName });
     const user = await userModel.save();
     if (!user) throw new HTTPBadRequest('could not save user');
     return { status: OK, payload: { user } };
