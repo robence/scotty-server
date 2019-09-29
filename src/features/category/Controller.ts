@@ -13,16 +13,19 @@ import { authenticate } from '../../middleware/auth';
 @Controller('api/categories')
 @ClassWrapper(expressAsyncHandler)
 class CategoryController {
-  @Post('/')
-  private async createCategory(req: Request, res: Response): Promise<void> {
-    const { status, payload } = await CategoryService.createCategory(req.body);
-    res.status(status).send(payload);
-  }
+  // -- public routes --
 
-  @Middleware(authenticate)
   @Get('/')
   private async getCategories(req: Request, res: Response): Promise<void> {
     const { status, payload } = await CategoryService.retrieveCategories();
+    res.status(status).send(payload);
+  }
+
+  // -- protected routes --
+  @Middleware(authenticate)
+  @Post('/')
+  private async createCategory(req: Request, res: Response): Promise<void> {
+    const { status, payload } = await CategoryService.createCategory(req.body);
     res.status(status).send(payload);
   }
 }

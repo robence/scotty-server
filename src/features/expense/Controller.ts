@@ -10,17 +10,12 @@ import {
 import { authenticate } from '../../middleware/auth';
 import { AuthenticatedRequest } from '../../types/controller';
 import ExpenseService from './Service';
+import { ExpenseType } from './Model';
 
 @Controller('api/expenses')
 @ClassWrapper(expressAsyncHandler)
 class ExpenseController {
-  @Post('/')
-  private async createExpense(req: Request, res: Response): Promise<void> {
-    const { status, payload } = await ExpenseService.createExpense(req.body);
-    res.status(status).send(payload);
-  }
-
-  @Middleware(authenticate)
+  // -- public routes --
   @Get('/')
   private async getExpenses(req: Request, res: Response): Promise<void> {
     const { status, payload } = await ExpenseService.retrieveExpenses();
@@ -35,8 +30,21 @@ class ExpenseController {
     res.status(status).send(payload);
   }
 
+  // -- protected routes --
+
   @Middleware(authenticate)
-  @Get('user')
+  @Post('/')
+  private async createExpense(
+    req: AuthenticatedRequest,
+    res: Response,
+  ): Promise<void> {
+    const expense: ExpenseType = { ...req.body, userId: req.user.id };
+    const { status, payload } = await ExpenseService.createExpense(expense);
+    res.status(status).send(payload);
+  }
+
+  @Middleware(authenticate)
+  @Get('token')
   private async getExpensesByToken(
     req: AuthenticatedRequest,
     res: Response,

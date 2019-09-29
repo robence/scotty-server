@@ -24,12 +24,11 @@ interface TagResponse {
 interface AccountResponse {
   account: AccountType;
 }
-interface SubDocumentInsert {
+export interface SubDocumentInsert {
   userId: number;
   name: string;
 }
 
-// TODO: create default account
 class UserService {
   async createUser(body: UserTypePassword): Promise<ResponseType<SingleUser>> {
     const userModel = new UserModel(body);
