@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import * as expressAsyncHandler from 'express-async-handler';
-import * as passport from 'passport';
 import {
   ClassWrapper,
   Controller,
